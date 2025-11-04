@@ -8,7 +8,6 @@ import { SignUp } from './pages/SignUp';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { Dashboard } from './pages/Dashboard';
 import { CreatePost } from './pages/CreatePost';
-import { CopywritingPage } from './pages/CopywritingPage';
 import { CalendarView } from './pages/CalendarView';
 import { Analytics } from './pages/Analytics';
 import { Team } from './pages/Team';
@@ -38,7 +37,7 @@ function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="create" element={<CreatePost />} />
-            <Route path="copywriting" element={<CopywritingPage />} />
+            <Route path="copywriting" element={<AICaptionGenerator />} />
             <Route path="schedule" element={<CreatePost />} />
             <Route path="calendar" element={<CalendarView />} />
             <Route path="ai-caption" element={<AICaptionGenerator />} />
