@@ -14,6 +14,7 @@ import { Team } from './pages/Team';
 import { Settings } from './pages/Settings';
 import { OAuthCallback } from './pages/OAuthCallback';
 import { AICaptionGenerator } from './pages/AICaptionGenerator';
+import { DraftPosts } from './pages/DraftPosts';
 
 function App() {
   return (
@@ -37,9 +38,11 @@ function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="create" element={<CreatePost />} />
+            <Route path="create-post" element={<CreatePost />} />
             <Route path="copywriting" element={<AICaptionGenerator />} />
             <Route path="schedule" element={<CreatePost />} />
             <Route path="calendar" element={<CalendarView />} />
+            <Route path="drafts" element={<DraftPosts />} />
             <Route path="ai-caption" element={<AICaptionGenerator />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="team" element={<Team />} />

@@ -10,7 +10,8 @@ import {
   LogOut,
   Zap,
   PlusCircle,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -25,6 +26,7 @@ export function Sidebar() {
   const navItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: CalendarIcon, label: 'Schedule Post', path: '/dashboard/schedule' },
+    { icon: FileText, label: 'Draft Posts', path: '/dashboard/drafts' },
     { icon: CalendarDays, label: 'Calendar', path: '/dashboard/calendar' },
     { icon: Sparkles, label: 'AI Captions', path: '/dashboard/ai-caption' },
     { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },

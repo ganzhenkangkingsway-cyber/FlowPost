@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, Send, CheckCircle2, Save } from 'lucide-react';
 import { getPlatformIcon } from '../../config/platformIcons';
 import { getConnectedAccounts } from '../../services/connectedAccounts';
 import { supabase } from '../../lib/supabase';
@@ -10,6 +10,8 @@ interface SchedulePostProps {
   onScheduleChange: (date: string) => void;
   uploadedImage: string | null;
   caption: string;
+  draftId?: string | null;
+  onDraftSaved?: (id: string) => void;
 }
 
 interface SelectedPlatform {
@@ -17,13 +19,15 @@ interface SelectedPlatform {
   selected: boolean;
 }
 
-export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, caption }: SchedulePostProps) {
+export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, caption, draftId, onDraftSaved }: SchedulePostProps) {
   const { user } = useAuth();
   const [selectedTime, setSelectedTime] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
   const [platforms, setPlatforms] = useState<SelectedPlatform[]>([]);
   const [loading, setLoading] = useState(true);
   const [scheduling, setScheduling] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   useEffect(() => {
     loadConnectedPlatforms();
@@ -181,6 +185,106 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!user) return;
+
+    setSavingDraft(true);
+
+    try {
+      // Ensure user profile exists
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          });
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          throw new Error('Failed to create user profile. Please try again.');
+        }
+      }
+
+      const selectedPlatformsList = platforms.filter(p => p.selected).map(p => p.name);
+
+      // Get connected accounts to map platform to username
+      const connectedAccounts = await getConnectedAccounts();
+      const platformAccounts: { [key: string]: string } = {};
+
+      selectedPlatformsList.forEach(platform => {
+        const account = connectedAccounts.find(acc => acc.platform === platform);
+        if (account) {
+          platformAccounts[platform] = account.platform_username;
+        }
+      });
+
+      // Determine if uploaded media is video or image
+      const isVideo = uploadedImage?.startsWith('blob:') || false;
+      const mediaType = uploadedImage ? (isVideo ? 'video' : 'image') : null;
+
+      const postData = {
+        user_id: user.id,
+        caption: caption,
+        image_url: isVideo ? null : uploadedImage,
+        video_url: isVideo ? uploadedImage : null,
+        media_type: mediaType,
+        scheduled_date: scheduledDate || null,
+        scheduled_time: selectedTime || null,
+        platforms: selectedPlatformsList,
+        platform_accounts: platformAccounts,
+        status: 'draft',
+      };
+
+      let savedDraftId: string;
+
+      if (draftId) {
+        // Update existing draft
+        const { data, error } = await supabase
+          .from('posts')
+          .update({ ...postData, updated_at: new Date().toISOString() })
+          .eq('id', draftId)
+          .select()
+          .single();
+
+        if (error) throw error;
+        savedDraftId = data.id;
+      } else {
+        // Create new draft
+        const { data, error } = await supabase
+          .from('posts')
+          .insert(postData)
+          .select()
+          .single();
+
+        if (error) throw error;
+        savedDraftId = data.id;
+      }
+
+      setDraftSaved(true);
+      if (onDraftSaved) {
+        onDraftSaved(savedDraftId);
+      }
+
+      setTimeout(() => {
+        setDraftSaved(false);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('Failed to save draft. Please try again.');
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
   const getMinDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -188,6 +292,7 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
 
   const selectedPlatformCount = platforms.filter(p => p.selected).length;
   const canSchedule = uploadedImage && caption && scheduledDate && selectedTime && selectedPlatformCount > 0;
+  const canSaveDraft = uploadedImage || caption;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-fit sticky top-24">
@@ -326,35 +431,66 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
           </div>
         )}
 
-        {/* Schedule Button */}
-        <button
-          onClick={handleSchedule}
-          disabled={!canSchedule || isScheduled || scheduling}
-          className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            isScheduled
-              ? 'bg-green-600 text-white'
-              : canSchedule && !scheduling
-              ? 'bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white shadow-lg hover:shadow-xl'
-              : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          {isScheduled ? (
-            <>
-              <CheckCircle2 className="w-5 h-5" />
-              Post Scheduled!
-            </>
-          ) : scheduling ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Scheduling...
-            </>
-          ) : (
-            <>
-              <Send className="w-5 h-5" />
-              Schedule Post
-            </>
-          )}
-        </button>
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={handleSaveDraft}
+            disabled={!canSaveDraft || draftSaved || savingDraft}
+            className={`flex-1 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+              draftSaved
+                ? 'bg-blue-600 text-white'
+                : canSaveDraft && !savingDraft
+                ? 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+            }`}
+          >
+            {draftSaved ? (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                Draft Saved!
+              </>
+            ) : savingDraft ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Save Draft
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleSchedule}
+            disabled={!canSchedule || isScheduled || scheduling}
+            className={`flex-1 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+              isScheduled
+                ? 'bg-green-600 text-white'
+                : canSchedule && !scheduling
+                ? 'bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white shadow-lg hover:shadow-xl'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {isScheduled ? (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                Post Scheduled!
+              </>
+            ) : scheduling ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Scheduling...
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                Schedule Post
+              </>
+            )}
+          </button>
+        </div>
 
         {!canSchedule && (
           <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
