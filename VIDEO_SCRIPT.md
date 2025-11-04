@@ -1,10 +1,10 @@
-# PostSync - Video Script (2-3 minutes)
+# FlowPost - Video Script (2-3 minutes)
 
 ## Opening Hook
 Are you tired of juggling multiple social media platforms, struggling to maintain consistency, and spending hours creating content? What if you could manage everything from one powerful dashboard?
 
 ## Introduction
-Meet PostSync - your all-in-one social media management solution that transforms the way you create, schedule, and analyze your social media presence.
+Meet FlowPost - your all-in-one social media management solution that transforms the way you create, schedule, and analyze your social media presence.
 
 ## Core Features
 
@@ -83,9 +83,9 @@ Meet PostSync - your all-in-one social media management solution that transforms
 - Team collaboration made easy
 
 ## Pricing
-Whether you're a solo creator, small business, or enterprise, PostSync has a plan for you. Start with our free tier and scale as you grow.
+Whether you're a solo creator, small business, or enterprise, FlowPost has a plan for you. Start with our free tier and scale as you grow.
 
 ## Call to Action
-Ready to transform your social media management? Sign up for PostSync today and get your first month free. Join thousands of creators and businesses who are already saving time and growing their social media presence.
+Ready to transform your social media management? Sign up for FlowPost today and get your first month free. Join thousands of creators and businesses who are already saving time and growing their social media presence.
 
-Visit our website, create your account, and start managing your social media like a pro. PostSync - where social media management meets simplicity.
+Visit our website, create your account, and start managing your social media like a pro. FlowPost - where social media management meets simplicity.
