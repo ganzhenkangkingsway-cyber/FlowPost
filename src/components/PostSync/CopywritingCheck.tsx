@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, RefreshCw, Copy, Check, Edit3 } from 'lucide-react';
 
 interface CopywritingCheckProps {
@@ -22,6 +22,15 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
   const [isCopied, setIsCopied] = useState(false);
   const [isUsed, setIsUsed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastImageProcessed, setLastImageProcessed] = useState<string | null>(null);
+
+  // Reset caption generation state when image changes
+  useEffect(() => {
+    if (uploadedImage && uploadedImage !== lastImageProcessed) {
+      setIsUsed(false);
+      setError(null);
+    }
+  }, [uploadedImage, lastImageProcessed]);
 
   const generateCaption = async () => {
     if (!uploadedImage) return;
@@ -29,6 +38,7 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
     setIsGenerating(true);
     setError(null);
     setIsUsed(false);
+    setLastImageProcessed(uploadedImage);
 
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -135,7 +145,7 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
               </span>
             </div>
           </div>
-        ) : !uploadedImage ? (
+        ) : !uploadedImage || uploadedImage.trim() === '' ? (
           <div className="text-center py-8 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <Sparkles className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -144,6 +154,14 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
           </div>
         ) : (
           <>
+            {uploadedImage && uploadedImage !== lastImageProcessed && !isGenerating && (
+              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                <p className="text-sm text-blue-700 dark:text-blue-300 font-medium flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  New image detected! Click below to generate a caption
+                </p>
+              </div>
+            )}
             <button
               onClick={generateCaption}
               disabled={isGenerating}
@@ -157,7 +175,7 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  Generate Caption
+                  {lastImageProcessed && lastImageProcessed === uploadedImage ? 'Regenerate Caption' : 'Generate Caption from Image'}
                 </>
               )}
             </button>
