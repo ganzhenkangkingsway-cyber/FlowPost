@@ -74,7 +74,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
               <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -85,7 +85,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Scheduled Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-green-500/20 transition-all animate-fade-in-up animation-delay-200">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-green-500/20 transition-all animate-fade-in-up animation-delay-200">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -96,7 +96,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Total Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up animation-delay-400">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up animation-delay-400">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -107,7 +107,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Draft Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-orange-500/20 transition-all animate-fade-in-up animation-delay-600">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-orange-500/20 transition-all animate-fade-in-up animation-delay-600">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-xl flex items-center justify-center">
               <Users className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -119,7 +119,7 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
         </div>
@@ -172,7 +172,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Schedule</h2>
             <button
@@ -201,7 +201,7 @@ export function Dashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Platform Performance</h2>
             <button
@@ -228,7 +228,7 @@ export function Dashboard() {
               {connectedAccounts.map((account) => {
                 const platform = getPlatformIcon(account.platform);
                 return (
-                  <div key={account.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <div key={account.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors border border-transparent dark:border-gray-700/50">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden ${platform.bgColor}`}>
                         <img src={platform.icon} alt={platform.name} className={`w-full h-full object-cover ${platform.iconClass}`} />
