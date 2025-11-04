@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, Sparkles, Image as ImageIcon, X, Palette } from 'lucide-react';
 import { PlatformPreviews } from './PlatformPreviews';
 import { AIGenerationModal } from './AIGenerationModal';
@@ -7,11 +7,12 @@ import { DesignPoster } from './DesignPoster';
 interface PosterUploadProps {
   uploadedImage: string | null;
   onImageUpload: (image: string | null) => void;
+  onDesignModeChange?: (isDesigning: boolean) => void;
 }
 
 type UploadMethod = 'selection' | 'upload' | 'ai' | 'design';
 
-export function PosterUpload({ uploadedImage, onImageUpload }: PosterUploadProps) {
+export function PosterUpload({ uploadedImage, onImageUpload, onDesignModeChange }: PosterUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadMethod, setUploadMethod] = useState<UploadMethod>('selection');
   const [showAIModal, setShowAIModal] = useState(false);
@@ -121,7 +122,13 @@ export function PosterUpload({ uploadedImage, onImageUpload }: PosterUploadProps
 
   const handleBackFromDesign = () => {
     setUploadMethod('selection');
+    onDesignModeChange?.(false);
   };
+
+  // Notify parent when entering/exiting design mode
+  useEffect(() => {
+    onDesignModeChange?.(uploadMethod === 'design');
+  }, [uploadMethod, onDesignModeChange]);
 
   if (uploadMethod === 'design') {
     return <DesignPoster onExport={handleDesignExport} onBack={handleBackFromDesign} />;

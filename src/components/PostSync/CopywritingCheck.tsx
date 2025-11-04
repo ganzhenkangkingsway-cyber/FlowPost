@@ -5,6 +5,7 @@ interface CopywritingCheckProps {
   caption: string;
   onCaptionChange: (caption: string) => void;
   uploadedImage: string | null;
+  isDesigning?: boolean;
 }
 
 interface GeneratedCaption {
@@ -15,7 +16,7 @@ interface GeneratedCaption {
 
 type CaptionMode = 'ai' | 'manual';
 
-export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: CopywritingCheckProps) {
+export function CopywritingCheck({ caption, onCaptionChange, uploadedImage, isDesigning = false }: CopywritingCheckProps) {
   const [mode, setMode] = useState<CaptionMode>('ai');
   const [generatedCaption, setGeneratedCaption] = useState<GeneratedCaption | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -145,11 +146,14 @@ export function CopywritingCheck({ caption, onCaptionChange, uploadedImage }: Co
               </span>
             </div>
           </div>
-        ) : !uploadedImage || uploadedImage.trim() === '' ? (
+        ) : !uploadedImage || uploadedImage.trim() === '' || isDesigning ? (
           <div className="text-center py-8 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <Sparkles className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Upload an image or video above to generate captions
+              {isDesigning
+                ? 'Complete your design and click "Export & Use" to generate captions'
+                : 'Upload an image or video above to generate captions'
+              }
             </p>
           </div>
         ) : (

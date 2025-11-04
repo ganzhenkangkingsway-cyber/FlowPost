@@ -7,6 +7,7 @@ export function CreatePost() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const [scheduledDate, setScheduledDate] = useState<string>('');
+  const [isDesigning, setIsDesigning] = useState(false);
 
   return (
     <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -24,11 +25,13 @@ export function CreatePost() {
           <PosterUpload
             uploadedImage={uploadedImage}
             onImageUpload={setUploadedImage}
+            onDesignModeChange={setIsDesigning}
           />
           <CopywritingCheck
             caption={caption}
             onCaptionChange={setCaption}
             uploadedImage={uploadedImage}
+            isDesigning={isDesigning}
           />
         </div>
 
