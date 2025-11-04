@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { TrendingUp, Calendar, Sparkles, Users, Clock } from 'lucide-react';
+import { TrendingUp, Calendar, Sparkles, Users, Clock, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getPlatformIcon } from '../config/platformIcons';
 
@@ -15,6 +15,7 @@ export function Dashboard() {
     draftPosts: 0,
   });
   const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
+  const [upcomingPosts, setUpcomingPosts] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -42,11 +43,19 @@ export function Dashboard() {
       .eq('user_id', user.id);
 
     if (posts) {
+      const scheduled = posts.filter(p => p.status === 'scheduled');
       setStats({
         totalPosts: posts.length,
-        scheduledPosts: posts.filter(p => p.status === 'scheduled').length,
+        scheduledPosts: scheduled.length,
         draftPosts: posts.filter(p => p.status === 'draft').length,
       });
+
+      // Get the first 3 upcoming scheduled posts
+      const upcoming = scheduled
+        .filter(p => p.scheduled_time && new Date(p.scheduled_time) > new Date())
+        .sort((a, b) => new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime())
+        .slice(0, 3);
+      setUpcomingPosts(upcoming);
     }
   };
 
@@ -63,6 +72,31 @@ export function Dashboard() {
   };
 
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
+
+  const formatScheduledTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+    if (diffDays === 0 && diffHours < 24) {
+      if (diffHours < 1) {
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        return `In ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
+      }
+      return `In ${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    } else if (diffDays < 7) {
+      return `In ${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+    }
+
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen gradient-bg-animated">
@@ -183,7 +217,7 @@ export function Dashboard() {
             </button>
           </div>
 
-          {stats.scheduledPosts === 0 ? (
+          {upcomingPosts.length === 0 ? (
             <div className="text-center py-12">
               <Clock className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-gray-500 dark:text-gray-400 mb-4">No scheduled posts yet</p>
@@ -195,8 +229,60 @@ export function Dashboard() {
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Your scheduled posts will appear here</p>
+            <div className="space-y-3">
+              {upcomingPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl list-item-hover border border-transparent dark:border-gray-700/50 cursor-pointer"
+                  onClick={() => navigate('/dashboard/schedule')}
+                >
+                  <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+                    {post.image_url ? (
+                      <img src={post.image_url} alt="" className="w-full h-full object-cover" />
+                    ) : post.video_url ? (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon className="w-6 h-6 text-gray-400" />
+                      </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon className="w-6 h-6 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {post.caption || 'Untitled Post'}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Clock className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatScheduledTime(post.scheduled_time)}
+                      </span>
+                    </div>
+                  </div>
+                  {post.platforms && (
+                    <div className="flex -space-x-2">
+                      {post.platforms.slice(0, 3).map((platform: string, idx: number) => {
+                        const platformInfo = getPlatformIcon(platform);
+                        return (
+                          <div
+                            key={idx}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 ${platformInfo.bgColor}`}
+                            title={platformInfo.name}
+                          >
+                            <img src={platformInfo.icon} alt={platformInfo.name} className={`w-3 h-3 ${platformInfo.iconClass}`} />
+                          </div>
+                        );
+                      })}
+                      {post.platforms.length > 3 && (
+                        <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center border-2 border-white dark:border-gray-800">
+                          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">+{post.platforms.length - 3}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
