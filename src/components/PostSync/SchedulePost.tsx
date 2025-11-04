@@ -306,7 +306,7 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
                 </div>
               </div>
               <div className="flex items-center gap-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Publishing to:</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Publishing to:</span>
                 <div className="flex gap-1">
                   {platforms.filter(p => p.selected).map((platform) => {
                     const iconConfig = getPlatformIcon(platform.name);
@@ -357,8 +357,8 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
         </button>
 
         {!canSchedule && (
-          <div className="text-center">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-300">
               {!uploadedImage && '📸 Upload an image • '}
               {!caption && '✍️ Write a caption • '}
               {!scheduledDate && '📅 Pick a date • '}
