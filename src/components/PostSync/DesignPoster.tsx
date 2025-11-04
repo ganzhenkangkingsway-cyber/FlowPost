@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import * as fabric from 'fabric';
+import { Canvas, IText, Rect, Circle as FabricCircle, FabricImage } from 'fabric';
 import {
   Type,
   Square,
@@ -42,10 +42,10 @@ const TEMPLATES: Template[] = [
 
 export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+  const fabricCanvasRef = useRef<Canvas | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<Template>(TEMPLATES[0]);
-  const [activeObject, setActiveObject] = useState<fabric.Object | null>(null);
+  const [activeObject, setActiveObject] = useState<any>(null);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#000000');
   const [fontSize, setFontSize] = useState(32);
@@ -56,7 +56,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    const canvas = new Canvas(canvasRef.current, {
       width: 800,
       height: 800,
       backgroundColor: backgroundColor,
@@ -64,14 +64,16 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
     fabricCanvasRef.current = canvas;
 
-    canvas.on('selection:created', (e) => {
-      setActiveObject(e.selected?.[0] || null);
-      updateToolbarFromSelection(e.selected?.[0]);
+    canvas.on('selection:created', (e: any) => {
+      const selected = e.selected?.[0] || null;
+      setActiveObject(selected);
+      updateToolbarFromSelection(selected);
     });
 
-    canvas.on('selection:updated', (e) => {
-      setActiveObject(e.selected?.[0] || null);
-      updateToolbarFromSelection(e.selected?.[0]);
+    canvas.on('selection:updated', (e: any) => {
+      const selected = e.selected?.[0] || null;
+      setActiveObject(selected);
+      updateToolbarFromSelection(selected);
     });
 
     canvas.on('selection:cleared', () => {
@@ -91,16 +93,15 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
     }
   }, [backgroundColor]);
 
-  const updateToolbarFromSelection = (obj: fabric.Object | undefined) => {
+  const updateToolbarFromSelection = (obj: any) => {
     if (!obj) return;
 
     if (obj.type === 'i-text' || obj.type === 'text') {
-      const textObj = obj as fabric.IText;
-      setTextColor(textObj.fill as string || '#000000');
-      setFontSize(textObj.fontSize || 32);
-      setFontWeight(textObj.fontWeight === 'bold' ? 'bold' : 'normal');
-      setFontStyle(textObj.fontStyle === 'italic' ? 'italic' : 'normal');
-      setTextAlign(textObj.textAlign as 'left' | 'center' | 'right' || 'left');
+      setTextColor(obj.fill as string || '#000000');
+      setFontSize(obj.fontSize || 32);
+      setFontWeight(obj.fontWeight === 'bold' ? 'bold' : 'normal');
+      setFontStyle(obj.fontStyle === 'italic' ? 'italic' : 'normal');
+      setTextAlign(obj.textAlign as 'left' | 'center' | 'right' || 'left');
     }
   };
 
@@ -121,7 +122,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   const addText = () => {
     if (!fabricCanvasRef.current) return;
 
-    const text = new fabric.IText('Double click to edit', {
+    const text = new IText('Double click to edit', {
       left: 100,
       top: 100,
       fontSize: fontSize,
@@ -139,10 +140,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   const addShape = (type: 'rect' | 'circle') => {
     if (!fabricCanvasRef.current) return;
 
-    let shape: fabric.Object;
+    let shape: any;
 
     if (type === 'rect') {
-      shape = new fabric.Rect({
+      shape = new Rect({
         left: 150,
         top: 150,
         width: 200,
@@ -152,7 +153,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
         strokeWidth: 2,
       });
     } else {
-      shape = new fabric.Circle({
+      shape = new FabricCircle({
         left: 150,
         top: 150,
         radius: 100,
@@ -175,7 +176,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
     reader.onload = (event) => {
       const imgUrl = event.target?.result as string;
 
-      fabric.Image.fromURL(imgUrl, (img) => {
+      FabricImage.fromURL(imgUrl).then((img) => {
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
@@ -210,8 +211,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
     if (!fabricCanvasRef.current || !activeObject) return;
 
     if (activeObject.type === 'i-text' || activeObject.type === 'text') {
-      const textObj = activeObject as fabric.IText;
-      textObj.set({
+      activeObject.set({
         fill: textColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
