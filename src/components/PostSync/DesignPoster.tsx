@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Canvas, IText, Rect, Circle as FabricCircle, FabricImage } from 'fabric';
+import { Canvas, IText, Rect, Circle as FabricCircle, FabricImage, Line, Triangle, Polygon } from 'fabric';
 import {
   Type,
   Square,
@@ -16,6 +16,13 @@ import {
   Bold,
   Italic,
   Plus,
+  Minus,
+  Triangle as TriangleIcon,
+  Star,
+  ArrowUp,
+  ArrowDown,
+  Copy,
+  Underline,
 } from 'lucide-react';
 
 interface DesignPosterProps {
@@ -52,6 +59,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   const [fontWeight, setFontWeight] = useState<'normal' | 'bold'>('normal');
   const [fontStyle, setFontStyle] = useState<'normal' | 'italic'>('normal');
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textDecoration, setTextDecoration] = useState<'none' | 'underline'>('none');
+  const [opacity, setOpacity] = useState(100);
+  const [strokeColor, setStrokeColor] = useState('#000000');
+  const [strokeWidth, setStrokeWidth] = useState(0);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -101,7 +112,12 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
       setFontWeight(obj.fontWeight === 'bold' ? 'bold' : 'normal');
       setFontStyle(obj.fontStyle === 'italic' ? 'italic' : 'normal');
       setTextAlign(obj.textAlign as 'left' | 'center' | 'right' || 'left');
+      setTextDecoration(obj.underline ? 'underline' : 'none');
     }
+
+    setOpacity(Math.round((obj.opacity || 1) * 100));
+    setStrokeColor(obj.stroke as string || '#000000');
+    setStrokeWidth(obj.strokeWidth || 0);
   };
 
   const applyTemplate = (template: Template) => {
@@ -136,7 +152,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
     fabricCanvasRef.current.renderAll();
   };
 
-  const addShape = (type: 'rect' | 'circle') => {
+  const addShape = (type: 'rect' | 'circle' | 'triangle' | 'line' | 'star') => {
     if (!fabricCanvasRef.current) return;
 
     let shape: any;
@@ -148,16 +164,55 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
         width: 200,
         height: 200,
         fill: '#3B82F6',
-        stroke: '#1E40AF',
+        stroke: strokeColor,
         strokeWidth: 2,
       });
-    } else {
+    } else if (type === 'circle') {
       shape = new FabricCircle({
         left: 150,
         top: 150,
         radius: 100,
         fill: '#3B82F6',
-        stroke: '#1E40AF',
+        stroke: strokeColor,
+        strokeWidth: 2,
+      });
+    } else if (type === 'triangle') {
+      shape = new Triangle({
+        left: 150,
+        top: 150,
+        width: 200,
+        height: 200,
+        fill: '#3B82F6',
+        stroke: strokeColor,
+        strokeWidth: 2,
+      });
+    } else if (type === 'line') {
+      shape = new Line([50, 100, 250, 100], {
+        left: 150,
+        top: 150,
+        stroke: strokeColor,
+        strokeWidth: 4,
+      });
+    } else if (type === 'star') {
+      const points = [];
+      const outerRadius = 100;
+      const innerRadius = 50;
+      const numPoints = 5;
+
+      for (let i = 0; i < numPoints * 2; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const angle = (Math.PI / numPoints) * i;
+        points.push({
+          x: radius * Math.sin(angle),
+          y: -radius * Math.cos(angle),
+        });
+      }
+
+      shape = new Polygon(points, {
+        left: 200,
+        top: 200,
+        fill: '#3B82F6',
+        stroke: strokeColor,
         strokeWidth: 2,
       });
     }
@@ -206,6 +261,32 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
     setActiveObject(null);
   };
 
+  const duplicateSelected = () => {
+    if (!fabricCanvasRef.current || !activeObject) return;
+
+    activeObject.clone((cloned: any) => {
+      cloned.set({
+        left: (activeObject.left || 0) + 20,
+        top: (activeObject.top || 0) + 20,
+      });
+      fabricCanvasRef.current?.add(cloned);
+      fabricCanvasRef.current?.setActiveObject(cloned);
+      fabricCanvasRef.current?.renderAll();
+    });
+  };
+
+  const bringForward = () => {
+    if (!fabricCanvasRef.current || !activeObject) return;
+    fabricCanvasRef.current.bringObjectForward(activeObject);
+    fabricCanvasRef.current.renderAll();
+  };
+
+  const sendBackward = () => {
+    if (!fabricCanvasRef.current || !activeObject) return;
+    fabricCanvasRef.current.sendObjectBackwards(activeObject);
+    fabricCanvasRef.current.renderAll();
+  };
+
   const updateTextProperties = () => {
     if (!fabricCanvasRef.current || !activeObject) return;
 
@@ -216,14 +297,30 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         textAlign: textAlign,
+        underline: textDecoration === 'underline',
       });
       fabricCanvasRef.current.renderAll();
     }
   };
 
+  const updateObjectProperties = () => {
+    if (!fabricCanvasRef.current || !activeObject) return;
+
+    activeObject.set({
+      opacity: opacity / 100,
+      stroke: strokeColor,
+      strokeWidth: strokeWidth,
+    });
+    fabricCanvasRef.current.renderAll();
+  };
+
   useEffect(() => {
     updateTextProperties();
-  }, [textColor, fontSize, fontWeight, fontStyle, textAlign]);
+  }, [textColor, fontSize, fontWeight, fontStyle, textAlign, textDecoration]);
+
+  useEffect(() => {
+    updateObjectProperties();
+  }, [opacity, strokeColor, strokeWidth]);
 
   const exportCanvas = () => {
     if (!fabricCanvasRef.current) return;
@@ -293,37 +390,62 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
           </div>
 
           <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <div className="flex flex-wrap items-center gap-3">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Add Elements</h4>
+            <div className="grid grid-cols-3 gap-2 mb-4">
               <button
                 onClick={addText}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
               >
-                <Type className="w-4 h-4" />
-                <span className="text-sm font-medium">Add Text</span>
+                <Type className="w-5 h-5" />
+                <span className="text-xs font-medium">Text</span>
               </button>
 
               <button
                 onClick={() => addShape('rect')}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
               >
-                <Square className="w-4 h-4" />
-                <span className="text-sm font-medium">Rectangle</span>
+                <Square className="w-5 h-5" />
+                <span className="text-xs font-medium">Rectangle</span>
               </button>
 
               <button
                 onClick={() => addShape('circle')}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
               >
-                <Circle className="w-4 h-4" />
-                <span className="text-sm font-medium">Circle</span>
+                <Circle className="w-5 h-5" />
+                <span className="text-xs font-medium">Circle</span>
+              </button>
+
+              <button
+                onClick={() => addShape('triangle')}
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+              >
+                <TriangleIcon className="w-5 h-5" />
+                <span className="text-xs font-medium">Triangle</span>
+              </button>
+
+              <button
+                onClick={() => addShape('star')}
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+              >
+                <Star className="w-5 h-5" />
+                <span className="text-xs font-medium">Star</span>
+              </button>
+
+              <button
+                onClick={() => addShape('line')}
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+              >
+                <Minus className="w-5 h-5" />
+                <span className="text-xs font-medium">Line</span>
               </button>
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors col-span-3"
               >
-                <ImageIcon className="w-4 h-4" />
-                <span className="text-sm font-medium">Add Image</span>
+                <ImageIcon className="w-5 h-5" />
+                <span className="text-xs font-medium">Add Image</span>
               </button>
 
               <input
@@ -333,18 +455,46 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
                 onChange={handleImageUpload}
                 className="hidden"
               />
-
-              <div className="flex-1" />
-
-              <button
-                onClick={deleteSelected}
-                disabled={!activeObject}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Delete</span>
-              </button>
             </div>
+
+            {activeObject && (
+              <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Actions</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={duplicateSelected}
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg transition-colors text-sm font-medium"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Duplicate
+                  </button>
+
+                  <button
+                    onClick={deleteSelected}
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg transition-colors text-sm font-medium"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+
+                  <button
+                    onClick={bringForward}
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors text-sm font-medium"
+                  >
+                    <ArrowUp className="w-4 h-4" />
+                    Forward
+                  </button>
+
+                  <button
+                    onClick={sendBackward}
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors text-sm font-medium"
+                  >
+                    <ArrowDown className="w-4 h-4" />
+                    Backward
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {activeObject && (activeObject.type === 'i-text' || activeObject.type === 'text') && (
@@ -378,10 +528,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
                 </div>
               </div>
 
-              <div className="flex gap-2 mt-4">
+              <div className="grid grid-cols-4 gap-2 mt-4">
                 <button
                   onClick={() => setFontWeight(fontWeight === 'bold' ? 'normal' : 'bold')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
                     fontWeight === 'bold'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -392,7 +542,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setFontStyle(fontStyle === 'italic' ? 'normal' : 'italic')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
                     fontStyle === 'italic'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -402,8 +552,19 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
                 </button>
 
                 <button
+                  onClick={() => setTextDecoration(textDecoration === 'underline' ? 'none' : 'underline')}
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                    textDecoration === 'underline'
+                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <Underline className="w-4 h-4" />
+                </button>
+
+                <button
                   onClick={() => setTextAlign('left')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
                     textAlign === 'left'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -414,7 +575,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextAlign('center')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
                     textAlign === 'center'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -425,7 +586,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextAlign('right')}
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
                     textAlign === 'right'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -433,6 +594,56 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
                 >
                   <AlignRight className="w-4 h-4" />
                 </button>
+              </div>
+            </div>
+          )}
+
+          {activeObject && (
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Object Properties</h4>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Opacity: {opacity}%
+                  </label>
+                  <input
+                    type="range"
+                    value={opacity}
+                    onChange={(e) => setOpacity(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Stroke Color
+                    </label>
+                    <input
+                      type="color"
+                      value={strokeColor}
+                      onChange={(e) => setStrokeColor(e.target.value)}
+                      className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Stroke Width
+                    </label>
+                    <input
+                      type="number"
+                      value={strokeWidth}
+                      onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      min="0"
+                      max="50"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
