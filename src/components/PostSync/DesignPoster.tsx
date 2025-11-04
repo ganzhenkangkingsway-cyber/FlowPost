@@ -351,29 +351,29 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors duration-200" />
             </button>
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Palette className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Design Your Poster</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-200">Design Your Poster</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
                 Create stunning visuals with drag-and-drop tools
               </p>
             </div>
           </div>
           <button
             onClick={exportCanvas}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors duration-200 flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             Export & Use
@@ -383,69 +383,69 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
       <div className="grid lg:grid-cols-[1fr_300px] gap-6 p-6">
         <div className="space-y-4">
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
             <div className="flex items-center justify-center">
-              <canvas ref={canvasRef} className="border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg" />
+              <canvas ref={canvasRef} className="border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg transition-colors duration-200" />
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Add Elements</h4>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">Add Elements</h4>
             <div className="grid grid-cols-3 gap-2 mb-4">
               <button
                 onClick={addText}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Type className="w-5 h-5" />
-                <span className="text-xs font-medium">Text</span>
+                <Type className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Text</span>
               </button>
 
               <button
                 onClick={() => addShape('rect')}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Square className="w-5 h-5" />
-                <span className="text-xs font-medium">Rectangle</span>
+                <Square className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Rectangle</span>
               </button>
 
               <button
                 onClick={() => addShape('circle')}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Circle className="w-5 h-5" />
-                <span className="text-xs font-medium">Circle</span>
+                <Circle className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Circle</span>
               </button>
 
               <button
                 onClick={() => addShape('triangle')}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <TriangleIcon className="w-5 h-5" />
-                <span className="text-xs font-medium">Triangle</span>
+                <TriangleIcon className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Triangle</span>
               </button>
 
               <button
                 onClick={() => addShape('star')}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Star className="w-5 h-5" />
-                <span className="text-xs font-medium">Star</span>
+                <Star className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Star</span>
               </button>
 
               <button
                 onClick={() => addShape('line')}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Minus className="w-5 h-5" />
-                <span className="text-xs font-medium">Line</span>
+                <Minus className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Line</span>
               </button>
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors col-span-3"
+                className="flex flex-col items-center gap-1 px-3 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200 col-span-3"
               >
-                <ImageIcon className="w-5 h-5" />
-                <span className="text-xs font-medium">Add Image</span>
+                <ImageIcon className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors duration-200" />
+                <span className="text-xs font-medium text-gray-900 dark:text-white transition-colors duration-200">Add Image</span>
               </button>
 
               <input
@@ -458,12 +458,12 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
             </div>
 
             {activeObject && (
-              <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Actions</h4>
+              <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-200">Actions</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={duplicateSelected}
-                    className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                     <Copy className="w-4 h-4" />
                     Duplicate
@@ -471,7 +471,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                   <button
                     onClick={deleteSelected}
-                    className="flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete
@@ -479,7 +479,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                   <button
                     onClick={bringForward}
-                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                     <ArrowUp className="w-4 h-4" />
                     Forward
@@ -487,7 +487,7 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                   <button
                     onClick={sendBackward}
-                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                     <ArrowDown className="w-4 h-4" />
                     Backward
@@ -498,30 +498,30 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
           </div>
 
           {activeObject && (activeObject.type === 'i-text' || activeObject.type === 'text') && (
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Text Properties</h4>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">Text Properties</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                     Text Color
                   </label>
                   <input
                     type="color"
                     value={textColor}
                     onChange={(e) => setTextColor(e.target.value)}
-                    className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                    className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer transition-colors duration-200"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                     Font Size
                   </label>
                   <input
                     type="number"
                     value={fontSize}
                     onChange={(e) => setFontSize(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
                     min="12"
                     max="200"
                   />
@@ -531,10 +531,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
               <div className="grid grid-cols-4 gap-2 mt-4">
                 <button
                   onClick={() => setFontWeight(fontWeight === 'bold' ? 'normal' : 'bold')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     fontWeight === 'bold'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <Bold className="w-4 h-4" />
@@ -542,10 +542,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setFontStyle(fontStyle === 'italic' ? 'normal' : 'italic')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     fontStyle === 'italic'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <Italic className="w-4 h-4" />
@@ -553,10 +553,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextDecoration(textDecoration === 'underline' ? 'none' : 'underline')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     textDecoration === 'underline'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <Underline className="w-4 h-4" />
@@ -564,10 +564,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextAlign('left')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     textAlign === 'left'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <AlignLeft className="w-4 h-4" />
@@ -575,10 +575,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextAlign('center')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     textAlign === 'center'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <AlignCenter className="w-4 h-4" />
@@ -586,10 +586,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <button
                   onClick={() => setTextAlign('right')}
-                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center justify-center px-3 py-2 rounded-lg border transition-colors duration-200 ${
                     textAlign === 'right'
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <AlignRight className="w-4 h-4" />
@@ -599,19 +599,19 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
           )}
 
           {activeObject && (
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Object Properties</h4>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">Object Properties</h4>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                     Opacity: {opacity}%
                   </label>
                   <input
                     type="range"
                     value={opacity}
                     onChange={(e) => setOpacity(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer transition-colors duration-200"
                     min="0"
                     max="100"
                   />
@@ -619,26 +619,26 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                       Stroke Color
                     </label>
                     <input
                       type="color"
                       value={strokeColor}
                       onChange={(e) => setStrokeColor(e.target.value)}
-                      className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                      className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer transition-colors duration-200"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                       Stroke Width
                     </label>
                     <input
                       type="number"
                       value={strokeWidth}
                       onChange={(e) => setStrokeWidth(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
                       min="0"
                       max="50"
                     />
@@ -650,29 +650,29 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Canvas</h4>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">Canvas</h4>
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                 Background Color
               </label>
               <input
                 type="color"
                 value={backgroundColor}
                 onChange={(e) => setBackgroundColor(e.target.value)}
-                className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                className="w-full h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer transition-colors duration-200"
               />
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Templates</h4>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">Templates</h4>
             <div className="space-y-2">
               {TEMPLATES.map((template) => (
                 <button
                   key={template.id}
                   onClick={() => applyTemplate(template)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
                     selectedTemplate.id === template.id
                       ? 'border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20'
                       : 'border-gray-300 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800'
@@ -685,10 +685,10 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
                     {template.platform.substring(0, 2)}
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    <div className="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200">
                       {template.name}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
                       {template.width} × {template.height}
                     </div>
                   </div>
