@@ -26,7 +26,7 @@ export function Sidebar() {
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: CalendarIcon, label: 'Schedule Post', path: '/dashboard/schedule' },
     { icon: CalendarDays, label: 'Calendar', path: '/dashboard/calendar' },
-    { icon: Sparkles, label: 'AI Caption Generator', path: '/dashboard/ai-caption' },
+    { icon: Sparkles, label: 'AI Captions', path: '/dashboard/ai-caption' },
     { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },
     { icon: Users, label: 'Team & Roles', path: '/dashboard/team' },
     { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
