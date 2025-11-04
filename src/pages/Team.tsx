@@ -255,7 +255,7 @@ export function Team() {
   }
 
   return (
-    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen gradient-bg-animated">
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

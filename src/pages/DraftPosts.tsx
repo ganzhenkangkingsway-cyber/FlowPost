@@ -74,7 +74,7 @@ export function DraftPosts() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="p-8 min-h-screen bg-gray-50 dark:bg-gray-900 gradient-bg-animated">
       <PageHeader
         title="Draft Posts"
         description="Continue working on your saved drafts"
@@ -97,7 +97,7 @@ export function DraftPosts() {
           </p>
           <button
             onClick={() => navigate('/dashboard/create-post')}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 hover:-translate-y-0.5 text-white rounded-lg font-medium transition-all duration-200 focus-brand"
           >
             Create New Post
           </button>
@@ -107,7 +107,7 @@ export function DraftPosts() {
           {drafts.map((draft) => (
             <div
               key={draft.id}
-              className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 faux-neon-border overflow-hidden hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/10 transition-all duration-300 animate-fade-in-up"
             >
               {(draft.image_url || draft.video_url) && (
                 <div className="aspect-video bg-gray-100 dark:bg-gray-700 relative">
@@ -162,7 +162,7 @@ export function DraftPosts() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => editDraft(draft.id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 hover:-translate-y-0.5 text-white rounded-lg font-medium transition-all duration-200 focus-brand active:scale-[0.98]"
                   >
                     <Edit className="w-4 h-4" />
                     Edit
@@ -173,7 +173,7 @@ export function DraftPosts() {
                         deleteDraft(draft.id);
                       }
                     }}
-                    className="px-4 py-2 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg transition-colors"
+                    className="px-4 py-2 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 hover:-translate-y-0.5 text-red-700 dark:text-red-400 rounded-lg transition-all duration-200 focus-brand active:scale-[0.98]"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

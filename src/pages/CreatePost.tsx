@@ -68,7 +68,7 @@ export function CreatePost() {
   }
 
   return (
-    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen gradient-bg-animated">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           {draftId ? 'Edit Draft Post' : 'Create Your Multi-Platform Post'}

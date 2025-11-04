@@ -65,7 +65,7 @@ export function Dashboard() {
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
 
   return (
-    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen gradient-bg-animated">
       <div className="mb-8 animate-fade-in-up">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
           Welcome back, {firstName}!
@@ -74,7 +74,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 faux-neon-border p-6 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all duration-300 animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
               <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -85,7 +85,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Scheduled Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-green-500/20 transition-all animate-fade-in-up animation-delay-200">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 faux-neon-border p-6 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-green-500/20 transition-all duration-300 animate-fade-in-up animation-delay-200">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -96,7 +96,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Total Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all animate-fade-in-up animation-delay-400">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 faux-neon-border p-6 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 transition-all duration-300 animate-fade-in-up animation-delay-400">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -107,7 +107,7 @@ export function Dashboard() {
           <p className="text-sm text-gray-500 dark:text-gray-400">Draft Posts</p>
         </div>
 
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:scale-105 hover:shadow-lg dark:hover:shadow-orange-500/20 transition-all animate-fade-in-up animation-delay-600">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 faux-neon-border p-6 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-orange-500/20 transition-all duration-300 animate-fade-in-up animation-delay-600">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-xl flex items-center justify-center">
               <Users className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -127,7 +127,7 @@ export function Dashboard() {
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/dashboard/create')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-xl transition-all hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand"
           >
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
               <Sparkles className="w-6 h-6 text-white" />
@@ -138,7 +138,7 @@ export function Dashboard() {
 
           <button
             onClick={() => navigate('/dashboard/copywriting')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 rounded-xl transition-all hover:scale-105 hover:shadow-lg dark:hover:shadow-blue-500/20"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand"
           >
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
               <Sparkles className="w-6 h-6 text-white" />
@@ -149,7 +149,7 @@ export function Dashboard() {
 
           <button
             onClick={() => navigate('/dashboard/analytics')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 rounded-xl transition-all hover:scale-105 hover:shadow-lg dark:hover:shadow-green-500/20"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-green-500/20 focus-brand"
           >
             <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-green-500/30">
               <TrendingUp className="w-6 h-6 text-white" />
@@ -160,7 +160,7 @@ export function Dashboard() {
 
           <button
             onClick={() => navigate('/dashboard/team')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 rounded-xl transition-all hover:scale-105 hover:shadow-lg dark:hover:shadow-orange-500/20"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-orange-500/20 focus-brand"
           >
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-orange-500/30">
               <Users className="w-6 h-6 text-white" />
@@ -228,7 +228,7 @@ export function Dashboard() {
               {connectedAccounts.map((account) => {
                 const platform = getPlatformIcon(account.platform);
                 return (
-                  <div key={account.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors border border-transparent dark:border-gray-700/50">
+                  <div key={account.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl list-item-hover border border-transparent dark:border-gray-700/50">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden ${platform.bgColor}`}>
                         <img src={platform.icon} alt={platform.name} className={`w-full h-full object-cover ${platform.iconClass}`} />
