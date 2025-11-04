@@ -22,21 +22,21 @@ export function Benefits() {
   return (
     <section className="py-20 lg:py-28 bg-gradient-to-br from-gray-50 to-blue-50/30">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <h2 className="text-4xl lg:text-5xl font-bold text-[#0A1A33] mb-4">
             Marketing without the bottlenecks
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 stagger-animation">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#1E6BFF]/30"
+                className="bg-white rounded-xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 hover:border-[#1E6BFF]/30 group"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-[#1E6BFF] to-[#4D8AFF] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-[#1E6BFF]/20">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#1E6BFF] to-[#4D8AFF] rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-[#1E6BFF]/20 group-hover:scale-110 transition-transform duration-300">
                   <Icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-[#0A1A33] mb-3">

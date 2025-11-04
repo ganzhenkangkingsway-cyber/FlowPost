@@ -102,7 +102,7 @@ export function Settings() {
       </div>
 
       <div className="max-w-4xl space-y-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
               <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -156,7 +156,7 @@ export function Settings() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
               <Bell className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
@@ -199,7 +199,7 @@ export function Settings() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
               <Palette className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -240,7 +240,7 @@ export function Settings() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
               <Globe className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -251,7 +251,7 @@ export function Settings() {
           <ConnectedPlatforms />
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />

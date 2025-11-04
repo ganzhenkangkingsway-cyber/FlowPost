@@ -37,7 +37,7 @@ export function Solutions() {
   return (
     <section className="py-20 lg:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <h2 className="text-4xl lg:text-5xl font-bold text-[#0A1A33] mb-4">
             Everything you need in one{' '}
             <span className="bg-gradient-to-r from-[#1E6BFF] to-[#4D8AFF] bg-clip-text text-transparent">
@@ -46,15 +46,15 @@ export function Solutions() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-animation">
           {modules.map((module, index) => {
             const Icon = module.icon;
             return (
               <div
                 key={index}
-                className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-xl transition-all duration-300 hover:border-[#1E6BFF]/30 hover:-translate-y-1 group"
+                className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-xl transition-all duration-300 hover:border-[#1E6BFF]/30 hover:-translate-y-2 group"
               >
-                <div className={`w-14 h-14 bg-gradient-to-br ${module.gradient} rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
+                <div className={`w-14 h-14 bg-gradient-to-br ${module.gradient} rounded-xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
                   <Icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-[#0A1A33] mb-3 group-hover:text-[#1E6BFF] transition-colors">

@@ -57,24 +57,24 @@ export function Pricing() {
   return (
     <section className="py-20 lg:py-28 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <h2 className="text-4xl lg:text-5xl font-bold text-[#0A1A33] mb-4">
             Plans built for growing SaaS teams
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 stagger-animation">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-xl ${
+              className={`bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 ${
                 plan.popular
-                  ? 'border-[#1E6BFF] shadow-lg shadow-[#1E6BFF]/10 relative'
+                  ? 'border-[#1E6BFF] shadow-lg shadow-[#1E6BFF]/10 relative scale-105'
                   : 'border-gray-200 hover:border-[#1E6BFF]/30'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1E6BFF] text-white px-4 py-1 rounded-full text-sm font-semibold">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1E6BFF] text-white px-4 py-1 rounded-full text-sm font-semibold animate-pulse-slow">
                   Most Popular
                 </div>
               )}
@@ -92,14 +92,14 @@ export function Pricing() {
               </div>
 
               <button
-                className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 mb-8 ${
+                className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 mb-8 group focus-brand active:scale-[0.98] ${
                   plan.popular
-                    ? 'bg-[#1E6BFF] text-white hover:bg-[#1557E0] shadow-lg shadow-[#1E6BFF]/30 hover:shadow-xl hover:scale-105'
-                    : 'bg-gray-100 text-[#0A1A33] hover:bg-gray-200'
+                    ? 'bg-[#1E6BFF] text-white hover:bg-[#1557E0] shadow-lg shadow-[#1E6BFF]/30 hover:shadow-xl hover:-translate-y-1'
+                    : 'bg-gray-100 text-[#0A1A33] hover:bg-gray-200 hover:-translate-y-1'
                 }`}
               >
                 {plan.cta}
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
               <ul className="space-y-4">

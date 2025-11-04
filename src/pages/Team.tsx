@@ -277,11 +277,11 @@ export function Team() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid lg:grid-cols-3 gap-6 mb-8 stagger-animation">
         {roleInfo.map((info) => {
           const Icon = info.icon;
           return (
-            <div key={info.role} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div key={info.role} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 faux-neon-border hover:-translate-y-1 transition-all duration-300">
               <div className={`w-12 h-12 ${info.color} rounded-xl flex items-center justify-center mb-4`}>
                 <Icon className="w-6 h-6" />
               </div>
@@ -302,7 +302,7 @@ export function Team() {
               const badge = getRoleBadge(invite.role);
               const BadgeIcon = badge.icon;
               return (
-                <div key={invite.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <div key={invite.id} className="p-6 list-item-hover">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">

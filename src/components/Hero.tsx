@@ -4,8 +4,8 @@ export function Hero() {
   return (
     <section className="relative bg-gradient-to-br from-[#0A1A33] via-[#0A1A33] to-[#0d2347] text-white overflow-hidden">
       {/* Animated gradient orbs */}
-      <div className="absolute top-20 right-20 w-96 h-96 bg-[#1E6BFF] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#1E6BFF] rounded-full blur-3xl opacity-15 animate-pulse animation-delay-400"></div>
+      <div className="absolute top-20 right-20 w-96 h-96 bg-[#1E6BFF] rounded-full blur-3xl opacity-20 animate-float"></div>
+      <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#1E6BFF] rounded-full blur-3xl opacity-15 animate-float animation-delay-600"></div>
 
       <div className="max-w-7xl mx-auto px-6 py-20 lg:py-32 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -27,13 +27,13 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="group bg-[#1E6BFF] hover:bg-[#1557E0] text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-[#1E6BFF]/30 hover:shadow-xl hover:shadow-[#1E6BFF]/40 hover:scale-105">
+              <button className="group bg-[#1E6BFF] hover:bg-[#1557E0] text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-[#1E6BFF]/30 hover:shadow-xl hover:shadow-[#1E6BFF]/40 hover:-translate-y-1 active:scale-[0.98] focus-brand">
                 Try PostPulse Free
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              <button className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2">
-                <Play className="w-5 h-5" />
+              <button className="group bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-1 active:scale-[0.98] focus-brand">
+                <Play className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 See Demo
               </button>
             </div>
@@ -90,7 +90,7 @@ export function Hero() {
               </div>
 
               {/* Floating status indicators */}
-              <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold flex items-center gap-2">
+              <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold flex items-center gap-2 animate-bounce-subtle">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 Published
               </div>
