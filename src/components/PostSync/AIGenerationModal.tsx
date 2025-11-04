@@ -91,9 +91,11 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
     }
   };
 
-  const handleRegenerate = () => {
+  const handleRegenerate = async () => {
+    // Clear the current image to show loading state
     setGeneratedImage(null);
-    handleGenerate();
+    // Regenerate with the same prompt and style - will get a new image due to random seed
+    await handleGenerate();
   };
 
   const handleUseImage = () => {
@@ -291,10 +293,10 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
               <button
                 onClick={handleRegenerate}
                 disabled={isGenerating}
-                className="px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-600 hover:-translate-y-0.5 text-gray-700 dark:text-gray-300 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-brand active:scale-[0.98]"
               >
-                <RefreshCw className="w-4 h-4" />
-                Regenerate
+                <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                {isGenerating ? 'Regenerating...' : 'Regenerate'}
               </button>
               <button
                 onClick={handleEditInPixlr}

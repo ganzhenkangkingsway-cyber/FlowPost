@@ -83,7 +83,9 @@ Deno.serve(async (req: Request) => {
     if (!imageUrl) {
       try {
         console.log("Attempting Pollinations AI...");
-        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true&model=flux`;
+        // Add random seed to ensure different images on each generation
+        const seed = Math.floor(Math.random() * 1000000);
+        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
 
         const pollinationsResponse = await fetch(pollinationsUrl, {
           method: "GET",
