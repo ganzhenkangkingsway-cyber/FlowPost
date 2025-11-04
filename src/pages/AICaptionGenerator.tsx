@@ -64,7 +64,7 @@ export function AICaptionGenerator() {
   ];
 
   return (
-    <div className="p-8">
+    <div className="p-8 min-h-screen bg-gray-50 dark:bg-gray-900">
       <PageHeader
         title="AI Caption Generator"
         description="Upload an image and generate engaging captions"
