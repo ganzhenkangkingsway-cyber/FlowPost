@@ -87,9 +87,8 @@ export function DesignPoster({ onExport, onBack }: DesignPosterProps) {
 
   useEffect(() => {
     if (fabricCanvasRef.current) {
-      fabricCanvasRef.current.setBackgroundColor(backgroundColor, () => {
-        fabricCanvasRef.current?.renderAll();
-      });
+      fabricCanvasRef.current.set('backgroundColor', backgroundColor);
+      fabricCanvasRef.current.renderAll();
     }
   }, [backgroundColor]);
 
