@@ -114,7 +114,7 @@ export function Dashboard() {
             </div>
             <span className="text-sm font-medium text-orange-600 dark:text-orange-400">Connected</span>
           </div>
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">4</h3>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{connectedAccounts.length}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">Platforms</p>
         </div>
       </div>
