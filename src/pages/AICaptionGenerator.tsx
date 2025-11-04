@@ -64,7 +64,7 @@ export function AICaptionGenerator() {
   ];
 
   return (
-    <>
+    <div className="p-8">
       <PageHeader
         title="AI Caption Generator"
         description="Upload an image and generate engaging captions"
@@ -72,8 +72,8 @@ export function AICaptionGenerator() {
         iconColor="from-blue-500 to-blue-600"
       />
 
-      <div className="space-y-6">
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+      <div className="space-y-6 max-w-4xl">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload Image</h3>
 
           {!uploadedImage ? (
@@ -112,7 +112,7 @@ export function AICaptionGenerator() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
@@ -222,7 +222,7 @@ export function AICaptionGenerator() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Writing Tips</h3>
           <div className="space-y-3">
             {writingTips.map((tip, index) => (
@@ -237,6 +237,6 @@ export function AICaptionGenerator() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
