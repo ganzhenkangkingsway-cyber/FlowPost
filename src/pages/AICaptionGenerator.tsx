@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { DashboardLayout } from '../components/DashboardLayout';
 import { PageHeader } from '../components/PageHeader';
 import { Sparkles, Upload, Pen, Loader2 } from 'lucide-react';
 
@@ -65,7 +64,7 @@ export function AICaptionGenerator() {
   ];
 
   return (
-    <DashboardLayout>
+    <>
       <PageHeader
         title="AI Caption Generator"
         description="Upload an image and generate engaging captions"
@@ -238,6 +237,6 @@ export function AICaptionGenerator() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 }
