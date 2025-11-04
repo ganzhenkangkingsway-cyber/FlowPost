@@ -168,46 +168,46 @@ export function Dashboard() {
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => navigate('/dashboard/create')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand flex flex-col items-center justify-center text-center"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Create New Post</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Design and schedule content</p>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">Create New Post</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Design and schedule content</p>
           </button>
 
           <button
             onClick={() => navigate('/dashboard/copywriting')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-500/20 focus-brand flex flex-col items-center justify-center text-center"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md dark:shadow-blue-500/30">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">AI Copywriting</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Optimize your captions</p>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">AI Copywriting</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Optimize your captions</p>
           </button>
 
           <button
             onClick={() => navigate('/dashboard/analytics')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-green-500/20 focus-brand"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-green-500/20 focus-brand flex flex-col items-center justify-center text-center"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-green-500/30">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md dark:shadow-green-500/30">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">View Analytics</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Track your performance</p>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">View Analytics</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Track your performance</p>
           </button>
 
           <button
             onClick={() => navigate('/dashboard/team')}
-            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-orange-500/20 focus-brand"
+            className="group p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-orange-500/20 focus-brand flex flex-col items-center justify-center text-center"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md dark:shadow-orange-500/30">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md dark:shadow-orange-500/30">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Manage Team</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Collaborate with members</p>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">Manage Team</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Collaborate with members</p>
           </button>
         </div>
       </div>
