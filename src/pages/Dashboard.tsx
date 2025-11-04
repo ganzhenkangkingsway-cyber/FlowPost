@@ -51,9 +51,15 @@ export function Dashboard() {
       });
 
       // Get the first 3 upcoming scheduled posts
+      // Combine scheduled_date and scheduled_time into a full datetime
       const upcoming = scheduled
-        .filter(p => p.scheduled_time && new Date(p.scheduled_time) > new Date())
-        .sort((a, b) => new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime())
+        .filter(p => p.scheduled_date)
+        .map(p => ({
+          ...p,
+          fullScheduledDate: new Date(`${p.scheduled_date}T${p.scheduled_time || '12:00'}:00`)
+        }))
+        .filter(p => p.fullScheduledDate > new Date())
+        .sort((a, b) => a.fullScheduledDate.getTime() - b.fullScheduledDate.getTime())
         .slice(0, 3);
       setUpcomingPosts(upcoming);
     }
@@ -73,8 +79,9 @@ export function Dashboard() {
 
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
 
-  const formatScheduledTime = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatScheduledTime = (post: any) => {
+    // Combine scheduled_date and scheduled_time
+    const date = post.fullScheduledDate || new Date(`${post.scheduled_date}T${post.scheduled_time || '12:00'}:00`);
     const now = new Date();
     const diffMs = date.getTime() - now.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -256,7 +263,7 @@ export function Dashboard() {
                     <div className="flex items-center gap-2 mt-1">
                       <Clock className="w-3 h-3 text-gray-500 dark:text-gray-400" />
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatScheduledTime(post.scheduled_time)}
+                        {formatScheduledTime(post)}
                       </span>
                     </div>
                   </div>
