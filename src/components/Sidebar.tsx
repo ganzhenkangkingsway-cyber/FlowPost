@@ -11,10 +11,15 @@ import {
   Zap,
   PlusCircle,
   Sparkles,
-  FileText
+  FileText,
+  HelpCircle
 } from 'lucide-react';
 
-export function Sidebar() {
+interface SidebarProps {
+  onHelpClick?: () => void;
+}
+
+export function Sidebar({ onHelpClick }: SidebarProps) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -24,14 +29,14 @@ export function Sidebar() {
   };
 
   const navItems = [
-    { icon: Home, label: 'Dashboard', path: '/dashboard' },
-    { icon: CalendarIcon, label: 'Schedule Post', path: '/dashboard/schedule' },
-    { icon: FileText, label: 'Draft Posts', path: '/dashboard/drafts' },
-    { icon: CalendarDays, label: 'Calendar', path: '/dashboard/calendar' },
-    { icon: Sparkles, label: 'AI Captions', path: '/dashboard/ai-caption' },
-    { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },
-    { icon: Users, label: 'Team & Roles', path: '/dashboard/team' },
-    { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
+    { icon: Home, label: 'Dashboard', path: '/dashboard', dataTutorial: 'dashboard' },
+    { icon: CalendarIcon, label: 'Schedule Post', path: '/dashboard/schedule', dataTutorial: 'create-post' },
+    { icon: FileText, label: 'Draft Posts', path: '/dashboard/drafts', dataTutorial: 'drafts' },
+    { icon: CalendarDays, label: 'Calendar', path: '/dashboard/calendar', dataTutorial: 'calendar' },
+    { icon: Sparkles, label: 'AI Captions', path: '/dashboard/ai-caption', dataTutorial: 'ai-caption' },
+    { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics', dataTutorial: 'analytics' },
+    { icon: Users, label: 'Team & Roles', path: '/dashboard/team', dataTutorial: 'team' },
+    { icon: Settings, label: 'Settings', path: '/dashboard/settings', dataTutorial: 'settings' },
   ];
 
   return (
@@ -69,6 +74,7 @@ export function Sidebar() {
               key={item.path}
               to={item.path}
               end={item.path === '/dashboard'}
+              data-tutorial={item.dataTutorial}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-all duration-200 ${
                   isActive
@@ -88,7 +94,16 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+        {onHelpClick && (
+          <button
+            onClick={onHelpClick}
+            className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200"
+          >
+            <HelpCircle className="w-5 h-5" />
+            Help & Tutorial
+          </button>
+        )}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200"
