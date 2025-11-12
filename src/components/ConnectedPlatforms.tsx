@@ -34,6 +34,7 @@ export function ConnectedPlatforms() {
   const loadConnectedAccounts = async () => {
     try {
       setIsLoading(true);
+      setError(null);
       const accounts = await getConnectedAccounts();
 
       setPlatforms(prevPlatforms =>
@@ -48,7 +49,9 @@ export function ConnectedPlatforms() {
       );
     } catch (err) {
       console.error('Error loading connected accounts:', err);
-      setError('Failed to load connected accounts');
+      setPlatforms(prevPlatforms =>
+        prevPlatforms.map(p => ({ ...p, connected: false, account: undefined }))
+      );
     } finally {
       setIsLoading(false);
     }
