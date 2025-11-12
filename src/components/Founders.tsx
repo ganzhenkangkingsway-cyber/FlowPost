@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 interface Founder {
   name: string;
-  role: string;
   image: string;
 }
 
@@ -33,29 +32,24 @@ export function Founders() {
 
   const founders: Founder[] = [
     {
-      name: 'Alexandra Chen',
-      role: 'CEO & Co-Founder',
-      image: 'https://ui-avatars.com/api/?name=Alexandra+Chen&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      name: 'Gan Zhen Kang',
+      image: 'https://ui-avatars.com/api/?name=Gan+Zhen+Kang&size=400&background=3B82F6&color=fff&bold=true&format=png',
     },
     {
-      name: 'Marcus Rodriguez',
-      role: 'CTO & Co-Founder',
-      image: 'https://ui-avatars.com/api/?name=Marcus+Rodriguez&size=400&background=8B5CF6&color=fff&bold=true&format=png',
+      name: 'Muhammad Firdaus Bin Idros',
+      image: 'https://ui-avatars.com/api/?name=Muhammad+Firdaus+Bin+Idros&size=400&background=8B5CF6&color=fff&bold=true&format=png',
     },
     {
-      name: 'Sarah Johnson',
-      role: 'Head of Product',
-      image: 'https://ui-avatars.com/api/?name=Sarah+Johnson&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      name: 'Poon Yu Yi',
+      image: 'https://ui-avatars.com/api/?name=Poon+Yu+Yi&size=400&background=3B82F6&color=fff&bold=true&format=png',
     },
     {
-      name: 'David Kim',
-      role: 'Head of Engineering',
-      image: 'https://ui-avatars.com/api/?name=David+Kim&size=400&background=8B5CF6&color=fff&bold=true&format=png',
+      name: 'Shernice Sim',
+      image: 'https://ui-avatars.com/api/?name=Shernice+Sim&size=400&background=8B5CF6&color=fff&bold=true&format=png',
     },
     {
-      name: 'Emily Watson',
-      role: 'Head of Design',
-      image: 'https://ui-avatars.com/api/?name=Emily+Watson&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      name: 'Bryan Stevenson Gunawan',
+      image: 'https://ui-avatars.com/api/?name=Bryan+Stevenson+Gunawan&size=400&background=3B82F6&color=fff&bold=true&format=png',
     },
   ];
 
@@ -99,7 +93,7 @@ export function Founders() {
               style={{
                 transitionDelay: isVisible ? `${index * 100}ms` : '0ms',
               }}
-              aria-label={`${founder.name}, ${founder.role}`}
+              aria-label={founder.name}
             >
               <div className="flex flex-col items-center text-center">
                 <div className="relative mb-6 w-48 h-48 md:w-52 md:h-52">
@@ -112,12 +106,9 @@ export function Founders() {
                   />
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#3B82F6] transition-colors duration-300">
+                <h3 className="text-xl font-bold text-white group-hover:text-[#3B82F6] transition-colors duration-300">
                   {founder.name}
                 </h3>
-                <p className="text-sm text-[#9CA3AF] font-medium opacity-80">
-                  {founder.role}
-                </p>
               </div>
             </div>
           ))}
