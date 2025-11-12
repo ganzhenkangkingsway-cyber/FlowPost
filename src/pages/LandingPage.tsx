@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Zap,
 } from 'lucide-react';
+import { Logo } from '../components/Logo';
 
 export function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -203,10 +204,7 @@ export function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="w-6 h-6 text-[#3B82F6]" />
-              <span className="text-2xl font-bold">FlowPost</span>
-            </div>
+            <Logo size="md" />
 
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-[#9CA3AF] hover:text-white transition-colors">
@@ -590,10 +588,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-6 h-6 text-[#3B82F6]" />
-                <span className="text-xl font-bold">FlowPost</span>
-              </div>
+              <Logo size="md" className="mb-4" />
               <p className="text-[#9CA3AF] mb-4">
                 Multi-platform social media management made simple.
               </p>

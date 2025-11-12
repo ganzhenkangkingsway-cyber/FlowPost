@@ -8,11 +8,11 @@ import {
   Users,
   Settings,
   LogOut,
-  Zap,
   PlusCircle,
   Sparkles,
   FileText
 } from 'lucide-react';
+import { Logo } from './Logo';
 
 export function Sidebar() {
   const { signOut } = useAuth();
@@ -41,9 +41,7 @@ export function Sidebar() {
           onClick={() => navigate('/')}
           className="flex items-center gap-3 w-full text-left hover:opacity-80 transition-opacity"
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Zap className="w-6 h-6 text-white" />
-          </div>
+          <Logo size="sm" showText={false} />
           <div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">FlowPost</h1>
             <p className="text-xs text-gray-600 dark:text-gray-400">Design once. Post everywhere.</p>
