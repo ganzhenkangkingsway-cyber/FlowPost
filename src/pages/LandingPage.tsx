@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Zap,
 } from 'lucide-react';
+import { Founders } from '../components/Founders';
 
 export function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -522,6 +523,9 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Founders Section */}
+      <Founders />
 
       {/* FAQ Section */}
       <section className="py-20 px-6">
