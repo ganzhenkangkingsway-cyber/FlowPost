@@ -29,6 +29,13 @@ export function DashboardLayout() {
 
     if (data && !data.onboarding_completed && !data.onboarding_skipped) {
       setShowWelcome(true);
+
+      await supabase
+        .from('profiles')
+        .update({
+          onboarding_skipped: true,
+        })
+        .eq('id', user.id);
     }
     setHasCheckedOnboarding(true);
   };
@@ -45,11 +52,11 @@ export function DashboardLayout() {
 
   const handleSkip = async () => {
     setShowWelcome(false);
+    setShowStepByStep(false);
     if (user) {
       await supabase
         .from('profiles')
         .update({
-          onboarding_skipped: true,
           onboarding_completed_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -73,7 +80,7 @@ export function DashboardLayout() {
   };
 
   const handleRestartTutorial = () => {
-    setShowWelcome(true);
+    setShowStepByStep(true);
   };
 
   return (
