@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, User, Bell, Shield, Palette, Globe } from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, Shield, Palette, Globe, CreditCard, Calendar, CheckCircle2, XCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ConnectedPlatforms } from '../components/ConnectedPlatforms';
@@ -19,6 +19,14 @@ export function Settings() {
   const [showSecurityQuestionModal, setShowSecurityQuestionModal] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
 
+  const [subscriptionPlan, setSubscriptionPlan] = useState('free');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('active');
+  const [subscriptionStartDate, setSubscriptionStartDate] = useState<string>('');
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState<string>('');
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [postsLimit, setPostsLimit] = useState(10);
+  const [postsUsed, setPostsUsed] = useState(0);
+
   useEffect(() => {
     if (user) {
       setEmail(user.email || '');
@@ -32,7 +40,7 @@ export function Settings() {
     setLoading(true);
     const { data, error } = await supabase
       .from('profiles')
-      .select('full_name, email, company')
+      .select('full_name, email, company, subscription_plan, subscription_status, subscription_start_date, subscription_end_date, billing_cycle, posts_limit, posts_used')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -40,10 +48,24 @@ export function Settings() {
       setFullName(data.full_name || '');
       setEmail(data.email || user.email || '');
       setCompany(data.company || '');
+      setSubscriptionPlan(data.subscription_plan || 'free');
+      setSubscriptionStatus(data.subscription_status || 'active');
+      setSubscriptionStartDate(data.subscription_start_date || '');
+      setSubscriptionEndDate(data.subscription_end_date || '');
+      setBillingCycle(data.billing_cycle || 'monthly');
+      setPostsLimit(data.posts_limit || 10);
+      setPostsUsed(data.posts_used || 0);
     } else {
       setFullName('');
       setEmail(user.email || '');
       setCompany('');
+      setSubscriptionPlan('free');
+      setSubscriptionStatus('active');
+      setSubscriptionStartDate('');
+      setSubscriptionEndDate('');
+      setBillingCycle('monthly');
+      setPostsLimit(10);
+      setPostsUsed(0);
     }
     setLoading(false);
   };
@@ -236,6 +258,112 @@ export function Settings() {
                   <p className="text-xs text-gray-600 dark:text-gray-400">Available now</p>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Subscription Plan</h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <CreditCard className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white capitalize">{subscriptionPlan}</p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${
+                      subscriptionStatus === 'active'
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : subscriptionStatus === 'trial'
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {subscriptionStatus === 'active' ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                      {subscriptionStatus}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{billingCycle} billing</p>
+                </div>
+              </div>
+              <button className="px-6 py-2 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all shadow-sm">
+                Upgrade
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Started</p>
+                </div>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  {subscriptionStartDate ? new Date(subscriptionStartDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Renewal Date</p>
+                </div>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  {subscriptionEndDate ? new Date(subscriptionEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-2 mb-2">
+                  <CreditCard className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Posts Usage</p>
+                </div>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  {postsUsed} / {postsLimit}
+                </p>
+                <div className="mt-2 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-emerald-500 to-blue-600 h-2 rounded-full transition-all"
+                    style={{ width: `${Math.min((postsUsed / postsLimit) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Current Plan Features:</h3>
+              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>{postsLimit} posts per month</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Multiple platform support</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>AI caption generation</span>
+                </li>
+                {subscriptionPlan !== 'free' && (
+                  <>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>Advanced analytics</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>Priority support</span>
+                    </li>
+                  </>
+                )}
+              </ul>
             </div>
           </div>
         </div>
