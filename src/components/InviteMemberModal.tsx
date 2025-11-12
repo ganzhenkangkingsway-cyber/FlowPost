@@ -78,37 +78,6 @@ export function InviteMemberModal({ isOpen, onClose, onInviteSent }: InviteMembe
 
       if (inviteError) throw inviteError;
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      const inviterName = profile?.full_name || user.email || 'A team member';
-
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-team-invitation`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify({
-          invitee_email: email.toLowerCase(),
-          inviter_name: inviterName,
-          invite_token: invitation.id,
-          role: role,
-        }),
-      });
-
-      if (!emailResponse.ok) {
-        const errorData = await emailResponse.json();
-        console.error('Failed to send email:', errorData);
-        throw new Error(errorData.error || 'Failed to send invitation email');
-      }
-
       setSuccess(true);
       setLoading(false);
 
