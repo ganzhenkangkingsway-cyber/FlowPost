@@ -1,4 +1,4 @@
-# PostSync
+# FlowPost
 
 A multi-platform social media management application that allows you to post to multiple platforms from a single dashboard. PostSync helps you schedule posts, manage drafts, analyze performance, and collaborate with team members across Twitter/X, LinkedIn, Facebook, Instagram, YouTube, and TikTok.
 
