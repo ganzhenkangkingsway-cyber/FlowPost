@@ -57,11 +57,6 @@ export function Founders() {
       role: 'Head of Design',
       image: 'https://ui-avatars.com/api/?name=Emily+Watson&size=400&background=3B82F6&color=fff&bold=true&format=png',
     },
-    {
-      name: 'James Patel',
-      role: 'Head of Growth',
-      image: 'https://ui-avatars.com/api/?name=James+Patel&size=400&background=8B5CF6&color=fff&bold=true&format=png',
-    },
   ];
 
   return (
