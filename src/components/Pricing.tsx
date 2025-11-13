@@ -3,7 +3,7 @@ import { Check, ArrowRight } from 'lucide-react';
 export function Pricing() {
   const plans = [
     {
-      name: 'Free',
+      name: 'Basic',
       price: '$0',
       period: '/forever',
       description: 'Perfect for individuals starting out',

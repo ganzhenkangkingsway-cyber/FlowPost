@@ -48,7 +48,7 @@ export function Settings() {
       setFullName(data.full_name || '');
       setEmail(data.email || user.email || '');
       setCompany(data.company || '');
-      setSubscriptionPlan(data.subscription_plan || 'free');
+      setSubscriptionPlan(data.subscription_plan || 'basic');
       setSubscriptionStatus(data.subscription_status || 'active');
       setSubscriptionStartDate(data.subscription_start_date || '');
       setSubscriptionEndDate(data.subscription_end_date || '');
