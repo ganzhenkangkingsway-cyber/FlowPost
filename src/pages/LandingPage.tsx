@@ -272,10 +272,10 @@ export function LandingPage() {
               </div>
 
               <h1 className="text-6xl md:text-8xl lg:text-[96px] font-bold leading-[1.1] animate-fade-in-up">
-                Post Once,
+                Design Once.
                 <br />
                 <span className="bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] bg-clip-text text-transparent">
-                  Reach Everywhere.
+                  Post Everywhere.
                 </span>
               </h1>
 
