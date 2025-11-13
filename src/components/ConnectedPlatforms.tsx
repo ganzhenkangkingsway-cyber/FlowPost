@@ -282,15 +282,27 @@ export function ConnectedPlatforms() {
                   Connecting...
                 </button>
               ) : platform.connected ? (
-                <button
-                  onClick={() => handleDisconnect(platform.platform)}
-                  className="w-full px-4 py-2 bg-green-600 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 group"
-                  title="Click to disconnect"
-                >
-                  <CheckCircle2 className="w-4 h-4 group-hover:hidden" />
-                  <span className="group-hover:hidden">Connected</span>
-                  <span className="hidden group-hover:inline">Disconnect</span>
-                </button>
+                <div className="space-y-2 w-full">
+                  {platform.platform === 'LinkedIn' && linkedinConnection?.profile_url && (
+                    <a
+                      href={linkedinConnection.profile_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      Login to LinkedIn
+                    </a>
+                  )}
+                  <button
+                    onClick={() => handleDisconnect(platform.platform)}
+                    className="w-full px-4 py-2 bg-green-600 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 group"
+                    title="Click to disconnect"
+                  >
+                    <CheckCircle2 className="w-4 h-4 group-hover:hidden" />
+                    <span className="group-hover:hidden">Connected</span>
+                    <span className="hidden group-hover:inline">Disconnect</span>
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={() => handleConnect(platform.platform)}
