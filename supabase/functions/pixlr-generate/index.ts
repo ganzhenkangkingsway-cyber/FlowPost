@@ -83,20 +83,20 @@ Deno.serve(async (req: Request) => {
     if (!imageUrl) {
       try {
         console.log("Attempting Pollinations AI...");
-        // Add random seed to ensure different images on each generation
         const seed = Math.floor(Math.random() * 1000000);
-        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
 
         const pollinationsResponse = await fetch(pollinationsUrl, {
           method: "GET",
-          headers: { "Accept": "image/*" }
+          headers: { "Accept": "image/*" },
+          redirect: "follow"
         });
 
         if (pollinationsResponse.ok) {
           const imageBlob = await pollinationsResponse.blob();
           const arrayBuffer = await imageBlob.arrayBuffer();
           const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/jpeg;base64,${base64}`;
+          imageUrl = `data:image/png;base64,${base64}`;
           console.log("Successfully generated with Pollinations AI");
         } else {
           lastError = `Pollinations: ${pollinationsResponse.status}`;
@@ -104,6 +104,65 @@ Deno.serve(async (req: Request) => {
       } catch (error) {
         lastError = `Pollinations: ${error instanceof Error ? error.message : "Unknown error"}`;
         console.error("Pollinations error:", error);
+      }
+    }
+
+    // Try DuckDuckGo proxy as another fallback
+    if (!imageUrl) {
+      try {
+        console.log("Attempting DuckDuckGo Image Generation...");
+        const seed = Math.floor(Math.random() * 1000000);
+        const ddgUrl = `https://duckduckgo.com/i/${encodeURIComponent(enhancedPrompt)}.jpg?seed=${seed}`;
+
+        const ddgResponse = await fetch(ddgUrl, {
+          method: "GET",
+          headers: { "Accept": "image/*" },
+          redirect: "follow"
+        });
+
+        if (ddgResponse.ok) {
+          const imageBlob = await ddgResponse.blob();
+          const arrayBuffer = await imageBlob.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          imageUrl = `data:image/jpeg;base64,${base64}`;
+          console.log("Successfully generated with DuckDuckGo");
+        } else {
+          lastError = `DuckDuckGo: ${ddgResponse.status}`;
+        }
+      } catch (error) {
+        lastError = `DuckDuckGo: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("DuckDuckGo error:", error);
+      }
+    }
+
+    // Try Replicate as final fallback
+    if (!imageUrl) {
+      try {
+        console.log("Attempting ImgFlip Meme Generator fallback...");
+        const seed = Math.floor(Math.random() * 1000000);
+        const imgflipUrl = `https://api.imgflip.com/ai_meme?text=${encodeURIComponent(enhancedPrompt)}&seed=${seed}`;
+
+        const imgflipResponse = await fetch(imgflipUrl, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (imgflipResponse.ok) {
+          const data = await imgflipResponse.json();
+          if (data.success && data.data?.url) {
+            const imageResponse = await fetch(data.data.url);
+            const imageBlob = await imageResponse.blob();
+            const arrayBuffer = await imageBlob.arrayBuffer();
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+            imageUrl = `data:image/jpeg;base64,${base64}`;
+            console.log("Successfully generated with ImgFlip");
+          }
+        } else {
+          lastError = `ImgFlip: ${imgflipResponse.status}`;
+        }
+      } catch (error) {
+        lastError = `ImgFlip: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("ImgFlip error:", error);
       }
     }
 
