@@ -3,51 +3,62 @@ import { Check, ArrowRight } from 'lucide-react';
 export function Pricing() {
   const plans = [
     {
-      name: 'Starter',
-      price: '$49',
-      period: '/month',
-      description: 'Perfect for small teams getting started',
+      name: 'Free',
+      price: '$0',
+      period: '/forever',
+      description: 'Perfect for individuals starting out',
       features: [
-        '3 social channels',
-        '50 posts per month',
-        'Basic analytics',
+        '1 social account',
+        '10 posts per month',
+        'Basic scheduling',
         'Content calendar',
-        'Email support',
+        'Community support',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Get Started Free',
       popular: false,
     },
     {
-      name: 'Growth',
-      price: '$149',
+      name: 'Starter',
+      price: '$19',
+      period: '/month',
+      description: 'Perfect for small teams getting started',
+      features: [
+        '5 social accounts',
+        '30 scheduled posts/month',
+        'Basic analytics',
+        'Email support',
+      ],
+      cta: 'Start 14-Day Free Trial',
+      popular: false,
+    },
+    {
+      name: 'Professional',
+      price: '$49',
       period: '/month',
       description: 'For growing teams ready to scale',
       features: [
-        '10 social channels',
+        '15 social accounts',
         'Unlimited posts',
         'Advanced analytics',
-        'AI content studio',
-        'Brand hub',
-        'Team collaboration',
         'Priority support',
+        'Team collaboration (5 members)',
+        'AI caption generation',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Start 14-Day Free Trial',
       popular: true,
     },
     {
-      name: 'Scale',
-      price: '$399',
-      period: '/month',
+      name: 'Enterprise',
+      price: 'Custom',
+      period: '',
       description: 'For established teams at scale',
       features: [
-        'Unlimited channels',
-        'Unlimited posts',
-        'Custom analytics & reports',
-        'AI content studio (advanced)',
-        'Brand hub (enterprise)',
-        'Advanced team roles',
-        'Dedicated success manager',
+        'Unlimited accounts',
+        'White-label',
+        'Dedicated manager',
         'API access',
+        'Custom integrations',
+        'SLA guarantee',
       ],
       cta: 'Contact Sales',
       popular: false,
@@ -63,13 +74,13 @@ export function Pricing() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 stagger-animation">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-animation">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 ${
+              className={`bg-white rounded-2xl p-6 lg:p-8 border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 ${
                 plan.popular
-                  ? 'border-[#1E6BFF] shadow-lg shadow-[#1E6BFF]/10 relative scale-105'
+                  ? 'border-[#1E6BFF] shadow-lg shadow-[#1E6BFF]/10 relative lg:scale-105'
                   : 'border-gray-200 hover:border-[#1E6BFF]/30'
               }`}
             >
