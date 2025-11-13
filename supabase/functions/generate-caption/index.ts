@@ -32,9 +32,6 @@ Deno.serve(async (req: Request) => {
 
     const isVideo = imageData.startsWith('blob:');
 
-    // For videos, we need to let the client know we'll analyze it differently
-    // Since we can't directly process blob URLs on the server,
-    // we'll return a video-specific caption if it's a video
     if (isVideo) {
       const videoMockCaptions = [
         {
@@ -72,11 +69,9 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Use Claude AI to analyze the image and generate a caption
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    const perplexityApiKey = Deno.env.get("PERPLEXITY_API_KEY");
 
-    if (!anthropicApiKey) {
-      // Fallback to mock caption if no API key
+    if (!perplexityApiKey) {
       const mockCaptions = [
         {
           text: "Capturing moments that matter ✨ Every picture tells a story, and this one speaks volumes.",
@@ -113,27 +108,22 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Call Claude API for image analysis
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": anthropicApiKey,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${perplexityApiKey}`,
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 1024,
+        model: "llama-3.1-sonar-large-128k-online",
         messages: [
           {
             role: "user",
             content: [
               {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: imageData.split(';')[0].split(':')[1],
-                  data: imageData.split(',')[1],
+                type: "image_url",
+                image_url: {
+                  url: imageData,
                 },
               },
               {
@@ -147,7 +137,7 @@ Deno.serve(async (req: Request) => {
                   "tone": "The tone of the caption (e.g., Inspirational, Casual, Professional, Enthusiastic)"
                 }
 
-                Make the caption engaging, relevant to the image, and optimized for social media. Include 2-3 relevant hashtags.`
+                Make the caption engaging, relevant to the image, and optimized for social media. Include 2-3 relevant hashtags. Only return the JSON, no additional text.`
               }
             ],
           },
@@ -156,13 +146,12 @@ Deno.serve(async (req: Request) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Claude API error: ${response.statusText}`);
+      throw new Error(`Perplexity API error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    const captionText = data.content[0].text;
+    const captionText = data.choices[0].message.content;
 
-    // Parse the JSON response from Claude
     const caption = JSON.parse(captionText);
 
     return new Response(

@@ -28,17 +28,40 @@ export function AICaptionGenerator() {
     setGeneratedCaptions([]);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const mockCaptions = [
+      const promises = Array(3).fill(null).map(async () => {
+        const response = await fetch(
+          `${supabaseUrl}/functions/v1/generate-caption`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+            },
+            body: JSON.stringify({ imageData: uploadedImage }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to generate caption');
+        }
+
+        const data = await response.json();
+        return `${data.text} ${data.hashtags.join(' ')}`;
+      });
+
+      const captions = await Promise.all(promises);
+      setGeneratedCaptions(captions);
+    } catch (error) {
+      console.error('Error generating captions:', error);
+      const fallbackCaptions = [
         "Transform your social media game with stunning visuals that captivate! 🎨✨ #DesignInspiration #CreativeContent",
         "Every great post starts with a powerful image. Make yours count! 💫 #SocialMediaMarketing #ContentCreation",
         "Elevate your brand with eye-catching designs that tell your story. Ready to stand out? 🚀 #BrandIdentity #DigitalMarketing"
       ];
-
-      setGeneratedCaptions(mockCaptions);
-    } catch (error) {
-      console.error('Error generating captions:', error);
+      setGeneratedCaptions(fallbackCaptions);
     } finally {
       setIsGenerating(false);
     }
