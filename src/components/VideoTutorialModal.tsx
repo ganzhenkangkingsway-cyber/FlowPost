@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Play, RotateCcw, Upload } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface VideoTutorialModalProps {
   isOpen: boolean;
@@ -10,8 +11,42 @@ interface VideoTutorialModalProps {
 export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutorialModalProps) {
   const [hasEnded, setHasEnded] = useState(false);
   const [videoKey, setVideoKey] = useState(0);
-  const [videoUrl, setVideoUrl] = useState<string>('https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4');
+  const [videoUrl, setVideoUrl] = useState<string>('');
   const [videoError, setVideoError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadVideoUrl();
+    }
+  }, [isOpen]);
+
+  const loadVideoUrl = async () => {
+    try {
+      setLoading(true);
+      const { data } = await supabase.storage
+        .from('videos')
+        .getPublicUrl('tutorials/flowpost-tutorial.mp4');
+
+      if (data?.publicUrl) {
+        // Check if video exists by trying to fetch it
+        const response = await fetch(data.publicUrl, { method: 'HEAD' });
+        if (response.ok) {
+          setVideoUrl(data.publicUrl);
+          setVideoError(false);
+        } else {
+          setVideoError(true);
+        }
+      } else {
+        setVideoError(true);
+      }
+    } catch (error) {
+      console.error('Error loading video:', error);
+      setVideoError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -63,19 +98,30 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
           </div>
 
           <div className="relative bg-gray-900 rounded-xl overflow-hidden shadow-2xl aspect-video">
-            {videoError ? (
+            {loading ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+                <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+                <p className="text-gray-400">Loading video...</p>
+              </div>
+            ) : videoError ? (
               <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
                 <Upload className="w-16 h-16 text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">Upload Your Tutorial Video</h3>
-                <p className="text-gray-400 mb-6">Click below to select your FlowPost Video.mp4 file</p>
-                <label className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] cursor-pointer">
+                <h3 className="text-xl font-semibold text-white mb-2">No Tutorial Video Found</h3>
+                <p className="text-gray-400 mb-6">Please upload your FlowPost Video.mp4 file</p>
+                <a
+                  href="/upload-video"
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  Go to Upload Page
+                </a>
+                <label className="mt-4 px-4 py-2 border border-gray-600 text-gray-300 hover:bg-gray-700 rounded-lg font-medium transition-colors cursor-pointer">
                   <input
                     type="file"
                     accept="video/*"
                     onChange={handleVideoUpload}
                     className="hidden"
                   />
-                  Select Video File
+                  Or Select File Now
                 </label>
               </div>
             ) : (
@@ -126,25 +172,9 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
           </div>
 
           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-            <div className="flex items-start gap-3">
-              <div className="flex-1">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <strong>Tip:</strong> You can access this tutorial anytime from the Help menu in the navigation bar.
-                </p>
-              </div>
-              {!videoError && (
-                <label className="flex items-center gap-2 px-3 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg font-medium transition-colors cursor-pointer border border-gray-200 dark:border-gray-600">
-                  <Upload className="w-3.5 h-3.5" />
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoUpload}
-                    className="hidden"
-                  />
-                  Upload Custom Video
-                </label>
-              )}
-            </div>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              <strong>Tip:</strong> You can access this tutorial anytime from the Help menu in the navigation bar.
+            </p>
           </div>
         </div>
       </div>

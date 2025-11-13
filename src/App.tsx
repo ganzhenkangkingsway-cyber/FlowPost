@@ -15,6 +15,7 @@ import { Settings } from './pages/Settings';
 import { OAuthCallback } from './pages/OAuthCallback';
 import { AICaptionGenerator } from './pages/AICaptionGenerator';
 import { DraftPosts } from './pages/DraftPosts';
+import { UploadTutorialVideo } from './pages/UploadTutorialVideo';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/upload-video" element={<UploadTutorialVideo />} />
           <Route path="/oauth/callback/:platform" element={
             <ProtectedRoute>
               <OAuthCallback />
