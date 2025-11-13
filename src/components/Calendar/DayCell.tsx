@@ -92,13 +92,13 @@ export function DayCell({
                   e.stopPropagation();
                   onPostClick(post);
                 }}
-                className={`text-left px-2 py-1 rounded text-xs truncate transition-all hover:scale-105 ${
+                className={`text-left px-2 py-1 rounded text-xs truncate transition-all hover:scale-105 font-medium ${
                   post.status === 'published'
                     ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                     : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
                 }`}
               >
-                {post.scheduled_time} - {post.platforms[0]}
+                <span className="font-bold">{post.scheduled_time}</span> • {post.platforms.join(', ')}
               </button>
             ))}
             {posts.length > 2 && (

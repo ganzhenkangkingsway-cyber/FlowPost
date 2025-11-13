@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Send, CheckCircle2, Save } from 'lucide-react';
 import { getPlatformIcon } from '../../config/platformIcons';
 import { getConnectedAccounts } from '../../services/connectedAccounts';
@@ -21,6 +22,7 @@ interface SelectedPlatform {
 
 export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, caption, draftId, onDraftSaved }: SchedulePostProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedTime, setSelectedTime] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
   const [platforms, setPlatforms] = useState<SelectedPlatform[]>([]);
@@ -173,9 +175,10 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
       setIsScheduled(true);
       onScheduleChange(`${scheduledDate}T${selectedTime}`);
 
+      // Show success message briefly, then redirect to calendar
       setTimeout(() => {
-        setIsScheduled(false);
-      }, 3000);
+        navigate('/dashboard/calendar');
+      }, 1500);
 
     } catch (error) {
       console.error('Error scheduling post:', error);
@@ -505,7 +508,7 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
         )}
 
         {scheduledDate && selectedTime && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center space-y-2">
             <p className="text-sm text-green-800 dark:text-green-300">
               <span className="font-semibold">Scheduled for:</span> {new Date(`${scheduledDate}T${selectedTime}`).toLocaleString('en-US', {
                 weekday: 'short',
@@ -515,6 +518,9 @@ export function SchedulePost({ scheduledDate, onScheduleChange, uploadedImage, c
                 hour: 'numeric',
                 minute: '2-digit',
               })}
+            </p>
+            <p className="text-xs text-green-700 dark:text-green-400">
+              📅 Your post will appear in the Calendar view after scheduling
             </p>
           </div>
         )}

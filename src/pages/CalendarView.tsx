@@ -44,10 +44,11 @@ export function CalendarView() {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('user_id', user.id)
+        .in('status', ['scheduled', 'published'])
         .gte('scheduled_date', startOfMonth.toISOString().split('T')[0])
         .lte('scheduled_date', endOfMonth.toISOString().split('T')[0])
-        .order('scheduled_date', { ascending: true });
+        .order('scheduled_date', { ascending: true })
+        .order('scheduled_time', { ascending: true });
 
       if (error) throw error;
       setPosts(data || []);
