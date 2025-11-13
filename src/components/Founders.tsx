@@ -33,7 +33,7 @@ export function Founders() {
   const founders: Founder[] = [
     {
       name: 'Gan Zhen Kang',
-      image: 'https://ui-avatars.com/api/?name=Gan+Zhen+Kang&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      image: '/image copy copy copy copy.png',
     },
     {
       name: 'Muhammad Firdaus Bin Idros',
