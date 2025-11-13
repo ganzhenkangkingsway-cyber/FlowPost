@@ -7,8 +7,6 @@ import {
   saveConnectedAccount,
   type ConnectedAccount,
 } from '../services/connectedAccounts';
-import { generateYouTubeAuthUrl, getYouTubeConnection, disconnectYouTube, type YouTubeConnection } from '../services/youtubeAuth';
-import { useAuth } from '../contexts/AuthContext';
 
 interface PlatformStatus {
   platform: string;
@@ -18,7 +16,6 @@ interface PlatformStatus {
 }
 
 export function ConnectedPlatforms() {
-  const { user } = useAuth();
   const [platforms, setPlatforms] = useState<PlatformStatus[]>([
     { platform: 'X', connected: false, loading: false },
     { platform: 'LinkedIn', connected: false, loading: false },
@@ -29,29 +26,10 @@ export function ConnectedPlatforms() {
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [youtubeConnection, setYoutubeConnection] = useState<YouTubeConnection | null>(null);
 
   useEffect(() => {
     loadConnectedAccounts();
-    loadYouTubeConnection();
-  }, [user]);
-
-  const loadYouTubeConnection = async () => {
-    if (!user) return;
-    try {
-      const connection = await getYouTubeConnection(user.id);
-      setYoutubeConnection(connection);
-      setPlatforms(prev =>
-        prev.map(p =>
-          p.platform === 'YouTube'
-            ? { ...p, connected: !!connection }
-            : p
-        )
-      );
-    } catch (err) {
-      console.error('Error loading YouTube connection:', err);
-    }
-  };
+  }, []);
 
   const loadConnectedAccounts = async () => {
     try {
@@ -61,9 +39,6 @@ export function ConnectedPlatforms() {
 
       setPlatforms(prevPlatforms =>
         prevPlatforms.map(p => {
-          if (p.platform === 'YouTube') {
-            return { ...p, connected: !!youtubeConnection };
-          }
           const account = accounts.find(a => a.platform === p.platform);
           return {
             ...p,
@@ -84,15 +59,6 @@ export function ConnectedPlatforms() {
 
   const handleConnect = async (platformName: string) => {
     try {
-      if (platformName === 'YouTube') {
-        if (!user) return;
-        const stateData = btoa(JSON.stringify({ userId: user.id }));
-        const authUrl = generateYouTubeAuthUrl();
-        const urlWithState = authUrl.replace(/state=[^&]+/, `state=${encodeURIComponent(stateData)}`);
-        window.location.href = urlWithState;
-        return;
-      }
-
       const config = oauthConfig[platformName];
 
       // Check if client ID is configured
@@ -111,6 +77,7 @@ export function ConnectedPlatforms() {
           LinkedIn: { id: 'li_user_456', username: 'Demo User', email: 'demo@linkedin.com' },
           Facebook: { id: 'fb_user_789', username: 'Demo User', email: 'demo@facebook.com' },
           Instagram: { id: 'ig_user_101', username: 'demo_user', email: null },
+          YouTube: { id: 'yt_user_202', username: 'Demo Channel', email: 'demo@gmail.com' },
           TikTok: { id: 'tt_user_303', username: 'demo_user', email: null },
         };
 
@@ -183,13 +150,7 @@ export function ConnectedPlatforms() {
         )
       );
 
-      if (platformName === 'YouTube') {
-        if (!user) return;
-        await disconnectYouTube(user.id);
-        setYoutubeConnection(null);
-      } else {
-        await disconnectAccount(platformName);
-      }
+      await disconnectAccount(platformName);
 
       setPlatforms(prev =>
         prev.map(p =>
@@ -244,28 +205,19 @@ export function ConnectedPlatforms() {
               className="flex flex-col p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 transition-all hover:border-gray-300 dark:hover:border-gray-500"
             >
               <div className="flex items-center gap-3 mb-3">
-                {platform.platform === 'YouTube' || platform.platform === 'TikTok' ? (
-                  <config.icon className="w-12 h-12" />
-                ) : (
-                  <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${config.iconBgColor}`}
-                  >
-                    <config.icon
-                      className={`w-6 h-6 ${config.iconColor}`}
-                      strokeWidth={2}
-                    />
-                  </div>
-                )}
+                <div
+                  className={`w-12 h-12 rounded-lg flex items-center justify-center ${config.iconBgColor}`}
+                >
+                  <config.icon
+                    className={`w-6 h-6 ${config.iconColor}`}
+                    strokeWidth={2}
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     {config.name}
                   </h3>
-                  {platform.connected && platform.platform === 'YouTube' && youtubeConnection && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {youtubeConnection.channel_name || youtubeConnection.email}
-                    </p>
-                  )}
-                  {platform.connected && platform.platform !== 'YouTube' && platform.account && (
+                  {platform.connected && platform.account && (
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       @{platform.account.platform_username}
                     </p>
@@ -282,27 +234,15 @@ export function ConnectedPlatforms() {
                   Connecting...
                 </button>
               ) : platform.connected ? (
-                <div className="space-y-2 w-full">
-                  {platform.platform === 'LinkedIn' && linkedinConnection?.profile_url && (
-                    <a
-                      href={linkedinConnection.profile_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                    >
-                      Login to LinkedIn
-                    </a>
-                  )}
-                  <button
-                    onClick={() => handleDisconnect(platform.platform)}
-                    className="w-full px-4 py-2 bg-green-600 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 group"
-                    title="Click to disconnect"
-                  >
-                    <CheckCircle2 className="w-4 h-4 group-hover:hidden" />
-                    <span className="group-hover:hidden">Connected</span>
-                    <span className="hidden group-hover:inline">Disconnect</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleDisconnect(platform.platform)}
+                  className="w-full px-4 py-2 bg-green-600 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 group"
+                  title="Click to disconnect"
+                >
+                  <CheckCircle2 className="w-4 h-4 group-hover:hidden" />
+                  <span className="group-hover:hidden">Connected</span>
+                  <span className="hidden group-hover:inline">Disconnect</span>
+                </button>
               ) : (
                 <button
                   onClick={() => handleConnect(platform.platform)}
