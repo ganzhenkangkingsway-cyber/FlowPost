@@ -1,10 +1,11 @@
 import { LucideIcon } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { TikTokIcon } from '../components/icons/TikTokIcon';
+import { YouTubeIcon } from '../components/icons/YouTubeIcon';
 
 export interface OAuthPlatform {
   name: string;
-  icon: LucideIcon | typeof TikTokIcon;
+  icon: LucideIcon | typeof TikTokIcon | typeof YouTubeIcon;
   iconBgColor: string;
   iconColor: string;
   authUrl: string;
@@ -63,8 +64,8 @@ export const oauthConfig: Record<string, OAuthPlatform> = {
   },
   YouTube: {
     name: 'YouTube',
-    icon: Icons.Youtube,
-    iconBgColor: 'bg-[#FF0000]',
+    icon: YouTubeIcon as any,
+    iconBgColor: 'bg-transparent',
     iconColor: 'text-white',
     authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',

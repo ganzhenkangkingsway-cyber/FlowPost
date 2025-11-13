@@ -7,6 +7,8 @@ import {
   saveConnectedAccount,
   type ConnectedAccount,
 } from '../services/connectedAccounts';
+import { generateYouTubeAuthUrl, getYouTubeConnection, disconnectYouTube, type YouTubeConnection } from '../services/youtubeAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 interface PlatformStatus {
   platform: string;
@@ -16,6 +18,7 @@ interface PlatformStatus {
 }
 
 export function ConnectedPlatforms() {
+  const { user } = useAuth();
   const [platforms, setPlatforms] = useState<PlatformStatus[]>([
     { platform: 'X', connected: false, loading: false },
     { platform: 'LinkedIn', connected: false, loading: false },
@@ -26,10 +29,29 @@ export function ConnectedPlatforms() {
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [youtubeConnection, setYoutubeConnection] = useState<YouTubeConnection | null>(null);
 
   useEffect(() => {
     loadConnectedAccounts();
-  }, []);
+    loadYouTubeConnection();
+  }, [user]);
+
+  const loadYouTubeConnection = async () => {
+    if (!user) return;
+    try {
+      const connection = await getYouTubeConnection(user.id);
+      setYoutubeConnection(connection);
+      setPlatforms(prev =>
+        prev.map(p =>
+          p.platform === 'YouTube'
+            ? { ...p, connected: !!connection }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error('Error loading YouTube connection:', err);
+    }
+  };
 
   const loadConnectedAccounts = async () => {
     try {
@@ -39,6 +61,9 @@ export function ConnectedPlatforms() {
 
       setPlatforms(prevPlatforms =>
         prevPlatforms.map(p => {
+          if (p.platform === 'YouTube') {
+            return { ...p, connected: !!youtubeConnection };
+          }
           const account = accounts.find(a => a.platform === p.platform);
           return {
             ...p,
@@ -59,6 +84,15 @@ export function ConnectedPlatforms() {
 
   const handleConnect = async (platformName: string) => {
     try {
+      if (platformName === 'YouTube') {
+        if (!user) return;
+        const stateData = btoa(JSON.stringify({ userId: user.id }));
+        const authUrl = generateYouTubeAuthUrl();
+        const urlWithState = authUrl.replace(/state=[^&]+/, `state=${encodeURIComponent(stateData)}`);
+        window.location.href = urlWithState;
+        return;
+      }
+
       const config = oauthConfig[platformName];
 
       // Check if client ID is configured
@@ -77,7 +111,6 @@ export function ConnectedPlatforms() {
           LinkedIn: { id: 'li_user_456', username: 'Demo User', email: 'demo@linkedin.com' },
           Facebook: { id: 'fb_user_789', username: 'Demo User', email: 'demo@facebook.com' },
           Instagram: { id: 'ig_user_101', username: 'demo_user', email: null },
-          YouTube: { id: 'yt_user_202', username: 'Demo Channel', email: 'demo@gmail.com' },
           TikTok: { id: 'tt_user_303', username: 'demo_user', email: null },
         };
 
@@ -150,7 +183,13 @@ export function ConnectedPlatforms() {
         )
       );
 
-      await disconnectAccount(platformName);
+      if (platformName === 'YouTube') {
+        if (!user) return;
+        await disconnectYouTube(user.id);
+        setYoutubeConnection(null);
+      } else {
+        await disconnectAccount(platformName);
+      }
 
       setPlatforms(prev =>
         prev.map(p =>
@@ -205,19 +244,28 @@ export function ConnectedPlatforms() {
               className="flex flex-col p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 transition-all hover:border-gray-300 dark:hover:border-gray-500"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div
-                  className={`w-12 h-12 rounded-lg flex items-center justify-center ${config.iconBgColor}`}
-                >
-                  <config.icon
-                    className={`w-6 h-6 ${config.iconColor}`}
-                    strokeWidth={2}
-                  />
-                </div>
+                {platform.platform === 'YouTube' || platform.platform === 'TikTok' ? (
+                  <config.icon className="w-12 h-12" />
+                ) : (
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${config.iconBgColor}`}
+                  >
+                    <config.icon
+                      className={`w-6 h-6 ${config.iconColor}`}
+                      strokeWidth={2}
+                    />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     {config.name}
                   </h3>
-                  {platform.connected && platform.account && (
+                  {platform.connected && platform.platform === 'YouTube' && youtubeConnection && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {youtubeConnection.channel_name || youtubeConnection.email}
+                    </p>
+                  )}
+                  {platform.connected && platform.platform !== 'YouTube' && platform.account && (
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       @{platform.account.platform_username}
                     </p>

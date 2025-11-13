@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, User, Bell, Shield, Palette, Globe, CreditCard, Calendar, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, Shield, Palette, Globe, CreditCard, Calendar, CheckCircle2, XCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ConnectedPlatforms } from '../components/ConnectedPlatforms';
 import { supabase } from '../lib/supabase';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
 import { SecurityQuestionModal } from '../components/SecurityQuestionModal';
-import { YouTubeIcon } from '../components/icons/YouTubeIcon';
-import { generateYouTubeAuthUrl, getYouTubeConnection, disconnectYouTube, type YouTubeConnection } from '../services/youtubeAuth';
-import { useSearchParams } from 'react-router-dom';
 
 export function Settings() {
   const { user } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [notifications, setNotifications] = useState(true);
   const [emailDigest, setEmailDigest] = useState(true);
   const [fullName, setFullName] = useState('');
@@ -22,9 +18,6 @@ export function Settings() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showSecurityQuestionModal, setShowSecurityQuestionModal] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const [youtubeConnection, setYoutubeConnection] = useState<YouTubeConnection | null>(null);
-  const [youtubeLoading, setYoutubeLoading] = useState(false);
-  const [youtubeMessage, setYoutubeMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
   const [subscriptionPlan, setSubscriptionPlan] = useState('free');
   const [subscriptionStatus, setSubscriptionStatus] = useState('active');
@@ -38,39 +31,8 @@ export function Settings() {
     if (user) {
       setEmail(user.email || '');
       fetchProfile();
-      fetchYouTubeConnection();
     }
   }, [user]);
-
-  useEffect(() => {
-    const youtubeConnected = searchParams.get('youtube_connected');
-    const youtubeError = searchParams.get('youtube_error');
-
-    if (youtubeConnected === 'true') {
-      setYoutubeMessage({ type: 'success', text: 'YouTube account connected successfully!' });
-      fetchYouTubeConnection();
-      searchParams.delete('youtube_connected');
-      setSearchParams(searchParams);
-      setTimeout(() => setYoutubeMessage(null), 5000);
-    }
-
-    if (youtubeError) {
-      const errorMessages: Record<string, string> = {
-        'token_exchange_failed': 'Failed to exchange authorization code. Please try again.',
-        'authentication_required': 'Authentication required. Please log in first.',
-        'database_error': 'Failed to save connection. Please try again.',
-        'unexpected_error': 'An unexpected error occurred. Please try again.',
-        'access_denied': 'Access denied. You must grant permissions to connect YouTube.'
-      };
-      setYoutubeMessage({
-        type: 'error',
-        text: errorMessages[youtubeError] || 'Failed to connect YouTube account.'
-      });
-      searchParams.delete('youtube_error');
-      setSearchParams(searchParams);
-      setTimeout(() => setYoutubeMessage(null), 5000);
-    }
-  }, [searchParams, setSearchParams]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -106,35 +68,6 @@ export function Settings() {
       setPostsUsed(0);
     }
     setLoading(false);
-  };
-
-  const fetchYouTubeConnection = async () => {
-    if (!user) return;
-    const connection = await getYouTubeConnection(user.id);
-    setYoutubeConnection(connection);
-  };
-
-  const handleConnectYouTube = () => {
-    if (!user) return;
-    const stateData = btoa(JSON.stringify({ userId: user.id }));
-    const authUrl = generateYouTubeAuthUrl();
-    const urlWithState = authUrl.replace(/state=[^&]+/, `state=${encodeURIComponent(stateData)}`);
-    window.location.href = urlWithState;
-  };
-
-  const handleDisconnectYouTube = async () => {
-    if (!user) return;
-    setYoutubeLoading(true);
-    const result = await disconnectYouTube(user.id);
-    if (result.success) {
-      setYoutubeConnection(null);
-      setYoutubeMessage({ type: 'success', text: 'YouTube account disconnected successfully!' });
-      setTimeout(() => setYoutubeMessage(null), 5000);
-    } else {
-      setYoutubeMessage({ type: 'error', text: result.error || 'Failed to disconnect YouTube account.' });
-      setTimeout(() => setYoutubeMessage(null), 5000);
-    }
-    setYoutubeLoading(false);
   };
 
   const handleSaveProfile = async () => {
@@ -444,82 +377,6 @@ export function Settings() {
           </div>
 
           <ConnectedPlatforms />
-
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Video Platforms</h3>
-
-            {youtubeMessage && (
-              <div className={`mb-4 p-4 rounded-lg border flex items-start gap-3 ${
-                youtubeMessage.type === 'success'
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-              }`}>
-                {youtubeMessage.type === 'success' ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                )}
-                <p className={`text-sm ${
-                  youtubeMessage.type === 'success'
-                    ? 'text-green-700 dark:text-green-300'
-                    : 'text-red-700 dark:text-red-300'
-                }`}>
-                  {youtubeMessage.text}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div className="flex flex-col p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600 transition-all hover:border-gray-300 dark:hover:border-gray-500">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <YouTubeIcon className="w-10 h-10" />
-                    <span className="font-medium text-gray-900 dark:text-white">YouTube</span>
-                  </div>
-                  {youtubeConnection && (
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span className="text-sm font-medium">Connected</span>
-                    </div>
-                  )}
-                </div>
-
-                {youtubeConnection ? (
-                  <div className="space-y-3">
-                    {youtubeConnection.channel_name && (
-                      <div className="text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Channel: </span>
-                        <span className="font-medium text-gray-900 dark:text-white">{youtubeConnection.channel_name}</span>
-                      </div>
-                    )}
-                    {youtubeConnection.email && (
-                      <div className="text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Account: </span>
-                        <span className="font-medium text-gray-900 dark:text-white">{youtubeConnection.email}</span>
-                      </div>
-                    )}
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Connected on {new Date(youtubeConnection.created_at).toLocaleDateString()}
-                    </div>
-                    <button
-                      onClick={handleDisconnectYouTube}
-                      disabled={youtubeLoading}
-                      className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {youtubeLoading ? 'Disconnecting...' : 'Disconnect'}
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleConnectYouTube}
-                    className="w-full px-4 py-2.5 bg-[#1E6BFF] hover:bg-[#1557E0] text-white rounded-lg font-medium transition-all hover:shadow-lg"
-                  >
-                    Connect
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 faux-neon-border p-6 animate-fade-in-up">
