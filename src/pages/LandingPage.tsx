@@ -38,7 +38,7 @@ export function LandingPage() {
     {
       icon: Share2,
       title: 'Post to All Platforms',
-      description: 'Publish to Instagram, Facebook, Twitter, LinkedIn, and more with one click',
+      description: 'Publish to Instagram, Facebook, X, LinkedIn, and more with one click',
     },
     {
       icon: Calendar,
@@ -164,7 +164,7 @@ export function LandingPage() {
     },
     {
       question: 'Which platforms are supported?',
-      answer: 'We currently support Instagram, Facebook, Twitter, LinkedIn, TikTok, Pinterest, and YouTube. We are constantly adding new platforms based on user demand.',
+      answer: 'We currently support Instagram, Facebook, X, LinkedIn, TikTok, Pinterest, and YouTube. We are constantly adding new platforms based on user demand.',
     },
     {
       question: 'Can I try it free?',
@@ -609,7 +609,7 @@ export function LandingPage() {
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a href="#" className="text-[#9CA3AF] hover:text-[#3B82F6] transition-colors">
-                  <Twitter className="w-5 h-5" />
+                  <XIcon className="w-5 h-5" />
                 </a>
                 <a href="#" className="text-[#9CA3AF] hover:text-[#3B82F6] transition-colors">
                   <Linkedin className="w-5 h-5" />
