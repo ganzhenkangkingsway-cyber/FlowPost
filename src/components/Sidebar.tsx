@@ -30,7 +30,7 @@ export function Sidebar({ onHelpClick }: SidebarProps) {
 
   const navItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard', dataTutorial: 'dashboard' },
-    { icon: CalendarIcon, label: 'Schedule Post', path: '/dashboard/schedule', dataTutorial: 'create-post' },
+    { icon: CalendarIcon, label: 'Scheduled Posts', path: '/dashboard/schedule', dataTutorial: 'scheduled-posts' },
     { icon: FileText, label: 'Draft Posts', path: '/dashboard/drafts', dataTutorial: 'drafts' },
     { icon: CalendarDays, label: 'Calendar', path: '/dashboard/calendar', dataTutorial: 'calendar' },
     { icon: Sparkles, label: 'AI Captions', path: '/dashboard/ai-caption', dataTutorial: 'ai-caption' },

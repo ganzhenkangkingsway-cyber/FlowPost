@@ -215,7 +215,7 @@ export function Dashboard() {
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-850 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Schedule</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Posts</h2>
             <button
               onClick={() => navigate('/dashboard/schedule')}
               className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"

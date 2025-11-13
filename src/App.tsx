@@ -15,6 +15,7 @@ import { Settings } from './pages/Settings';
 import { OAuthCallback } from './pages/OAuthCallback';
 import { AICaptionGenerator } from './pages/AICaptionGenerator';
 import { DraftPosts } from './pages/DraftPosts';
+import { ScheduledPosts } from './pages/ScheduledPosts';
 import { UploadTutorialVideo } from './pages/UploadTutorialVideo';
 
 function App() {
@@ -42,7 +43,7 @@ function App() {
             <Route path="create" element={<CreatePost />} />
             <Route path="create-post" element={<CreatePost />} />
             <Route path="copywriting" element={<AICaptionGenerator />} />
-            <Route path="schedule" element={<CreatePost />} />
+            <Route path="schedule" element={<ScheduledPosts />} />
             <Route path="calendar" element={<CalendarView />} />
             <Route path="drafts" element={<DraftPosts />} />
             <Route path="ai-caption" element={<AICaptionGenerator />} />
