@@ -14,12 +14,12 @@ import {
   X,
   Instagram,
   Facebook,
-  Twitter,
   Linkedin,
   Star,
   ArrowRight,
   Zap,
 } from 'lucide-react';
+import { XIcon } from '../components/icons/XIcon';
 import { Founders } from '../components/Founders';
 
 export function LandingPage() {
@@ -320,7 +320,7 @@ export function LandingPage() {
                     {[
                       { icon: Instagram, name: 'Instagram', color: '#E4405F' },
                       { icon: Facebook, name: 'Facebook', color: '#1877F2' },
-                      { icon: Twitter, name: 'Twitter', color: '#1DA1F2' },
+                      { icon: XIcon, name: 'X', color: '#000000' },
                       { icon: Linkedin, name: 'LinkedIn', color: '#0A66C2' },
                     ].map((platform, i) => (
                       <div
