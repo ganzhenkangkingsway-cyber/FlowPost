@@ -50,8 +50,8 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      // Call the Imagen AI edge function
-      const response = await fetch(`${supabaseUrl}/functions/v1/imagen-generate`, {
+      // Call the edge function
+      const response = await fetch(`${supabaseUrl}/functions/v1/pixlr-generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
