@@ -1,10 +1,11 @@
 import { LucideIcon } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { TikTokIcon } from '../components/icons/TikTokIcon';
+import { XIcon } from '../components/icons/XIcon';
 
 export interface OAuthPlatform {
   name: string;
-  icon: LucideIcon | typeof TikTokIcon;
+  icon: LucideIcon | typeof TikTokIcon | typeof XIcon;
   iconBgColor: string;
   iconColor: string;
   authUrl: string;
@@ -19,9 +20,9 @@ const baseRedirectUri = `${window.location.origin}/oauth/callback`;
 export const oauthConfig: Record<string, OAuthPlatform> = {
   X: {
     name: 'X',
-    icon: Icons.Twitter,
-    iconBgColor: 'bg-white',
-    iconColor: 'text-black',
+    icon: XIcon as any,
+    iconBgColor: 'bg-white dark:bg-gray-900',
+    iconColor: 'text-black dark:text-white',
     authUrl: 'https://twitter.com/i/oauth2/authorize',
     tokenUrl: 'https://api.twitter.com/2/oauth2/token',
     scopes: ['tweet.read', 'users.read', 'offline.access'],
