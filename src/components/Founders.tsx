@@ -41,7 +41,7 @@ export function Founders() {
     },
     {
       name: 'Poon Yu Yi',
-      image: 'https://ui-avatars.com/api/?name=Poon+Yu+Yi&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      image: '/WhatsApp Image 2025-11-13 at 20.09.54_e1f84b1e.jpg',
     },
     {
       name: 'Shernice Sim',
