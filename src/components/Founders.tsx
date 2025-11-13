@@ -45,7 +45,7 @@ export function Founders() {
     },
     {
       name: 'Shernice Sim',
-      image: 'https://ui-avatars.com/api/?name=Shernice+Sim&size=400&background=8B5CF6&color=fff&bold=true&format=png',
+      image: '/image copy copy copy copy copy copy.png',
     },
     {
       name: 'Bryan Stevenson Gunawan',
