@@ -52,118 +52,166 @@ Deno.serve(async (req: Request) => {
     let imageUrl: string | null = null;
     let lastError: string | null = null;
 
-    // Try Picsum for placeholder with overlay text
+    // Try Pollinations AI with simpler approach
     try {
-      console.log("Attempting Picsum Photos with text overlay...");
-      const seed = Math.floor(Math.random() * 1000);
-      const width = 1024;
-      const height = 1024;
+      console.log("Attempting Pollinations AI...");
+      const seed = Math.floor(Math.random() * 1000000);
+      const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&seed=${seed}&nologo=true&enhance=true`;
 
-      // Use picsum for the base image
-      const picsumUrl = `https://picsum.photos/seed/${seed}/${width}/${height}`;
-
-      const picsumResponse = await fetch(picsumUrl, {
+      const pollinationsResponse = await fetch(pollinationsUrl, {
         method: "GET",
         redirect: "follow"
       });
 
-      if (picsumResponse.ok) {
-        const imageBlob = await picsumResponse.blob();
-        const arrayBuffer = await imageBlob.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-        imageUrl = `data:image/jpeg;base64,${base64}`;
-        console.log("Successfully generated with Picsum");
+      if (pollinationsResponse.ok) {
+        const imageBlob = await pollinationsResponse.blob();
+        if (imageBlob.size > 1000) {
+          const arrayBuffer = await imageBlob.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          imageUrl = `data:image/png;base64,${base64}`;
+          console.log("Successfully generated with Pollinations AI");
+        } else {
+          lastError = `Pollinations: Image too small`;
+        }
       } else {
-        lastError = `Picsum: ${picsumResponse.status}`;
+        lastError = `Pollinations: ${pollinationsResponse.status}`;
       }
     } catch (error) {
-      lastError = `Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
-      console.error("Picsum error:", error);
+      lastError = `Pollinations: ${error instanceof Error ? error.message : "Unknown error"}`;
+      console.error("Pollinations error:", error);
     }
 
-    // Try Lorem Picsum as fallback
+    // Try Replicate with Stable Diffusion
     if (!imageUrl) {
       try {
-        console.log("Attempting Lorem Picsum...");
-        const id = Math.floor(Math.random() * 1000);
-        const loremUrl = `https://picsum.photos/id/${id}/1024/1024`;
+        console.log("Attempting AI Horde...");
+        const hordeUrl = "https://stablehorde.net/api/v2/generate/async";
 
-        const loremResponse = await fetch(loremUrl, {
+        const hordeResponse = await fetch(hordeUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": "0000000000"
+          },
+          body: JSON.stringify({
+            prompt: enhancedPrompt,
+            params: {
+              width: 1024,
+              height: 1024,
+              steps: 30,
+              cfg_scale: 7,
+              sampler_name: "k_euler"
+            },
+            nsfw: false,
+            censor_nsfw: true,
+            models: ["stable_diffusion"]
+          })
+        });
+
+        if (hordeResponse.ok) {
+          const hordeData = await hordeResponse.json();
+          const jobId = hordeData.id;
+
+          // Poll for result (max 60 seconds)
+          let attempts = 0;
+          const maxAttempts = 30;
+
+          while (attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const checkResponse = await fetch(`https://stablehorde.net/api/v2/generate/check/${jobId}`);
+            const checkData = await checkResponse.json();
+
+            if (checkData.done && checkData.generations && checkData.generations.length > 0) {
+              const imageDataUrl = checkData.generations[0].img;
+
+              const imgResponse = await fetch(imageDataUrl);
+              const imageBlob = await imgResponse.blob();
+              const arrayBuffer = await imageBlob.arrayBuffer();
+              const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+              imageUrl = `data:image/png;base64,${base64}`;
+              console.log("Successfully generated with AI Horde");
+              break;
+            }
+
+            attempts++;
+          }
+
+          if (!imageUrl) {
+            lastError = "AI Horde: Timeout";
+          }
+        } else {
+          lastError = `AI Horde: ${hordeResponse.status}`;
+        }
+      } catch (error) {
+        lastError = `AI Horde: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("AI Horde error:", error);
+      }
+    }
+
+    // Try Segmind API
+    if (!imageUrl) {
+      try {
+        console.log("Attempting Segmind API...");
+        const segmindUrl = "https://api.segmind.com/v1/sd1.5-txt2img";
+
+        const segmindResponse = await fetch(segmindUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            prompt: enhancedPrompt,
+            negative_prompt: "low quality, blurry, distorted",
+            samples: 1,
+            width: 1024,
+            height: 1024,
+            num_inference_steps: 30,
+            guidance_scale: 7.5
+          })
+        });
+
+        if (segmindResponse.ok) {
+          const imageBlob = await segmindResponse.blob();
+          if (imageBlob.size > 1000) {
+            const arrayBuffer = await imageBlob.arrayBuffer();
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+            imageUrl = `data:image/png;base64,${base64}`;
+            console.log("Successfully generated with Segmind");
+          }
+        } else {
+          lastError = `Segmind: ${segmindResponse.status}`;
+        }
+      } catch (error) {
+        lastError = `Segmind: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Segmind error:", error);
+      }
+    }
+
+    // Fallback to high-quality stock photo
+    if (!imageUrl) {
+      try {
+        console.log("Falling back to Picsum Photos...");
+        const seed = Math.floor(Math.random() * 1000);
+        const picsumUrl = `https://picsum.photos/seed/${seed}/1024/1024`;
+
+        const picsumResponse = await fetch(picsumUrl, {
           method: "GET",
           redirect: "follow"
         });
 
-        if (loremResponse.ok) {
-          const imageBlob = await loremResponse.blob();
+        if (picsumResponse.ok) {
+          const imageBlob = await picsumResponse.blob();
           const arrayBuffer = await imageBlob.arrayBuffer();
           const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
           imageUrl = `data:image/jpeg;base64,${base64}`;
-          console.log("Successfully generated with Lorem Picsum");
+          console.log("Successfully generated with Picsum Photos (fallback)");
         } else {
-          lastError = `Lorem Picsum: ${loremResponse.status}`;
+          lastError = `Picsum: ${picsumResponse.status}`;
         }
       } catch (error) {
-        lastError = `Lorem Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Lorem Picsum error:", error);
-      }
-    }
-
-    // Try Placeholder.com as another fallback
-    if (!imageUrl) {
-      try {
-        console.log("Attempting Placeholder.com...");
-        const colors = ["FF6B6B", "4ECDC4", "45B7D1", "FFA07A", "98D8C8", "F7DC6F"];
-        const bgColor = colors[Math.floor(Math.random() * colors.length)];
-        const textColor = "FFFFFF";
-        const encodedText = encodeURIComponent(prompt.substring(0, 50));
-
-        const placeholderUrl = `https://via.placeholder.com/1024x1024/${bgColor}/${textColor}?text=${encodedText}`;
-
-        const placeholderResponse = await fetch(placeholderUrl, {
-          method: "GET"
-        });
-
-        if (placeholderResponse.ok) {
-          const imageBlob = await placeholderResponse.blob();
-          const arrayBuffer = await imageBlob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/png;base64,${base64}`;
-          console.log("Successfully generated with Placeholder.com");
-        } else {
-          lastError = `Placeholder: ${placeholderResponse.status}`;
-        }
-      } catch (error) {
-        lastError = `Placeholder: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Placeholder error:", error);
-      }
-    }
-
-    // Try DummyImage.com as final fallback
-    if (!imageUrl) {
-      try {
-        console.log("Attempting DummyImage...");
-        const colors = ["ff6b6b", "4ecdc4", "45b7d1", "ffa07a", "98d8c8", "f7dc6f"];
-        const bgColor = colors[Math.floor(Math.random() * colors.length)];
-        const shortText = prompt.substring(0, 30).replace(/[^a-zA-Z0-9 ]/g, '');
-
-        const dummyUrl = `https://dummyimage.com/1024x1024/${bgColor}/ffffff&text=${encodeURIComponent(shortText)}`;
-
-        const dummyResponse = await fetch(dummyUrl, {
-          method: "GET"
-        });
-
-        if (dummyResponse.ok) {
-          const imageBlob = await dummyResponse.blob();
-          const arrayBuffer = await imageBlob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/png;base64,${base64}`;
-          console.log("Successfully generated with DummyImage");
-        } else {
-          lastError = `DummyImage: ${dummyResponse.status}`;
-        }
-      } catch (error) {
-        lastError = `DummyImage: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("DummyImage error:", error);
+        lastError = `Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Picsum error:", error);
       }
     }
 
