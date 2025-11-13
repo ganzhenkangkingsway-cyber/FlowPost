@@ -49,7 +49,7 @@ export function Founders() {
     },
     {
       name: 'Bryan Stevenson Gunawan',
-      image: 'https://ui-avatars.com/api/?name=Bryan+Stevenson+Gunawan&size=400&background=3B82F6&color=fff&bold=true&format=png',
+      image: '/image copy copy copy copy copy copy copy.png',
     },
   ];
 
