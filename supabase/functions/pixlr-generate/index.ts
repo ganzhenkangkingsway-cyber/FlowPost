@@ -60,15 +60,25 @@ Deno.serve(async (req: Request) => {
 
       const pollinationsResponse = await fetch(pollinationsUrl, {
         method: "GET",
-        redirect: "follow"
+        redirect: "follow",
+        signal: AbortSignal.timeout(30000)
       });
 
       if (pollinationsResponse.ok) {
         const imageBlob = await pollinationsResponse.blob();
         if (imageBlob.size > 1000) {
           const arrayBuffer = await imageBlob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/png;base64,${base64}`;
+          const uint8Array = new Uint8Array(arrayBuffer);
+
+          // Convert to base64 in chunks to avoid stack overflow
+          let base64 = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < uint8Array.length; i += chunkSize) {
+            const chunk = uint8Array.slice(i, i + chunkSize);
+            base64 += String.fromCharCode.apply(null, Array.from(chunk));
+          }
+
+          imageUrl = `data:image/png;base64,${btoa(base64)}`;
           console.log("Successfully generated with Pollinations AI");
         } else {
           lastError = `Pollinations: Image too small`;
@@ -128,8 +138,17 @@ Deno.serve(async (req: Request) => {
               const imgResponse = await fetch(imageDataUrl);
               const imageBlob = await imgResponse.blob();
               const arrayBuffer = await imageBlob.arrayBuffer();
-              const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-              imageUrl = `data:image/png;base64,${base64}`;
+              const uint8Array = new Uint8Array(arrayBuffer);
+
+              // Convert to base64 in chunks to avoid stack overflow
+              let base64 = '';
+              const chunkSize = 8192;
+              for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                const chunk = uint8Array.slice(i, i + chunkSize);
+                base64 += String.fromCharCode.apply(null, Array.from(chunk));
+              }
+
+              imageUrl = `data:image/png;base64,${btoa(base64)}`;
               console.log("Successfully generated with AI Horde");
               break;
             }
@@ -175,8 +194,17 @@ Deno.serve(async (req: Request) => {
           const imageBlob = await segmindResponse.blob();
           if (imageBlob.size > 1000) {
             const arrayBuffer = await imageBlob.arrayBuffer();
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-            imageUrl = `data:image/png;base64,${base64}`;
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            // Convert to base64 in chunks to avoid stack overflow
+            let base64 = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+              const chunk = uint8Array.slice(i, i + chunkSize);
+              base64 += String.fromCharCode.apply(null, Array.from(chunk));
+            }
+
+            imageUrl = `data:image/png;base64,${btoa(base64)}`;
             console.log("Successfully generated with Segmind");
           }
         } else {
@@ -197,14 +225,24 @@ Deno.serve(async (req: Request) => {
 
         const picsumResponse = await fetch(picsumUrl, {
           method: "GET",
-          redirect: "follow"
+          redirect: "follow",
+          signal: AbortSignal.timeout(15000)
         });
 
         if (picsumResponse.ok) {
           const imageBlob = await picsumResponse.blob();
           const arrayBuffer = await imageBlob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/jpeg;base64,${base64}`;
+          const uint8Array = new Uint8Array(arrayBuffer);
+
+          // Convert to base64 in chunks to avoid stack overflow
+          let base64 = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < uint8Array.length; i += chunkSize) {
+            const chunk = uint8Array.slice(i, i + chunkSize);
+            base64 += String.fromCharCode.apply(null, Array.from(chunk));
+          }
+
+          imageUrl = `data:image/jpeg;base64,${btoa(base64)}`;
           console.log("Successfully generated with Picsum Photos (fallback)");
         } else {
           lastError = `Picsum: ${picsumResponse.status}`;
