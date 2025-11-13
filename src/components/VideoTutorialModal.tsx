@@ -57,9 +57,9 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
               controls
               autoPlay
               onEnded={() => setHasEnded(true)}
-              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'%3E%3Crect fill='%231f2937' width='1280' height='720'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='48' fill='%239ca3af'%3EPostSync Tutorial%3C/text%3E%3C/svg%3E"
+              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'%3E%3Crect fill='%231f2937' width='1280' height='720'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='48' fill='%239ca3af'%3EFlowPost Tutorial%3C/text%3E%3C/svg%3E"
             >
-              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+              <source src="/FlowPost-Video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
 
