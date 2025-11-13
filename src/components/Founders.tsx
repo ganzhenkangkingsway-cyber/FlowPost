@@ -37,7 +37,7 @@ export function Founders() {
     },
     {
       name: 'Muhammad Firdaus Bin Idros',
-      image: 'https://ui-avatars.com/api/?name=Muhammad+Firdaus+Bin+Idros&size=400&background=8B5CF6&color=fff&bold=true&format=png',
+      image: '/image copy copy copy copy copy.png',
     },
     {
       name: 'Poon Yu Yi',
