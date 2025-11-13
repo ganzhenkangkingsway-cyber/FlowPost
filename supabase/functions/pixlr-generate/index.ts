@@ -52,124 +52,125 @@ Deno.serve(async (req: Request) => {
     let imageUrl: string | null = null;
     let lastError: string | null = null;
 
+    // Try Picsum for placeholder with overlay text
     try {
-      console.log("Attempting Hugging Face API...");
-      const hfResponse = await fetch(
-        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ inputs: enhancedPrompt }),
-        }
-      );
+      console.log("Attempting Picsum Photos with text overlay...");
+      const seed = Math.floor(Math.random() * 1000);
+      const width = 1024;
+      const height = 1024;
 
-      if (hfResponse.ok) {
-        const imageBlob = await hfResponse.blob();
+      // Use picsum for the base image
+      const picsumUrl = `https://picsum.photos/seed/${seed}/${width}/${height}`;
+
+      const picsumResponse = await fetch(picsumUrl, {
+        method: "GET",
+        redirect: "follow"
+      });
+
+      if (picsumResponse.ok) {
+        const imageBlob = await picsumResponse.blob();
         const arrayBuffer = await imageBlob.arrayBuffer();
         const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
         imageUrl = `data:image/jpeg;base64,${base64}`;
-        console.log("Successfully generated with Hugging Face");
+        console.log("Successfully generated with Picsum");
       } else {
-        lastError = `Hugging Face: ${hfResponse.status}`;
-        console.log("Hugging Face failed, trying fallback...");
+        lastError = `Picsum: ${picsumResponse.status}`;
       }
     } catch (error) {
-      lastError = `Hugging Face: ${error instanceof Error ? error.message : "Unknown error"}`;
-      console.error("Hugging Face error:", error);
+      lastError = `Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
+      console.error("Picsum error:", error);
     }
 
+    // Try Lorem Picsum as fallback
     if (!imageUrl) {
       try {
-        console.log("Attempting Pollinations AI...");
-        const seed = Math.floor(Math.random() * 1000000);
-        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
+        console.log("Attempting Lorem Picsum...");
+        const id = Math.floor(Math.random() * 1000);
+        const loremUrl = `https://picsum.photos/id/${id}/1024/1024`;
 
-        const pollinationsResponse = await fetch(pollinationsUrl, {
+        const loremResponse = await fetch(loremUrl, {
           method: "GET",
-          headers: { "Accept": "image/*" },
           redirect: "follow"
         });
 
-        if (pollinationsResponse.ok) {
-          const imageBlob = await pollinationsResponse.blob();
-          const arrayBuffer = await imageBlob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          imageUrl = `data:image/png;base64,${base64}`;
-          console.log("Successfully generated with Pollinations AI");
-        } else {
-          lastError = `Pollinations: ${pollinationsResponse.status}`;
-        }
-      } catch (error) {
-        lastError = `Pollinations: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Pollinations error:", error);
-      }
-    }
-
-    // Try DuckDuckGo proxy as another fallback
-    if (!imageUrl) {
-      try {
-        console.log("Attempting DuckDuckGo Image Generation...");
-        const seed = Math.floor(Math.random() * 1000000);
-        const ddgUrl = `https://duckduckgo.com/i/${encodeURIComponent(enhancedPrompt)}.jpg?seed=${seed}`;
-
-        const ddgResponse = await fetch(ddgUrl, {
-          method: "GET",
-          headers: { "Accept": "image/*" },
-          redirect: "follow"
-        });
-
-        if (ddgResponse.ok) {
-          const imageBlob = await ddgResponse.blob();
+        if (loremResponse.ok) {
+          const imageBlob = await loremResponse.blob();
           const arrayBuffer = await imageBlob.arrayBuffer();
           const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
           imageUrl = `data:image/jpeg;base64,${base64}`;
-          console.log("Successfully generated with DuckDuckGo");
+          console.log("Successfully generated with Lorem Picsum");
         } else {
-          lastError = `DuckDuckGo: ${ddgResponse.status}`;
+          lastError = `Lorem Picsum: ${loremResponse.status}`;
         }
       } catch (error) {
-        lastError = `DuckDuckGo: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("DuckDuckGo error:", error);
+        lastError = `Lorem Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Lorem Picsum error:", error);
       }
     }
 
-    // Try Replicate as final fallback
+    // Try Placeholder.com as another fallback
     if (!imageUrl) {
       try {
-        console.log("Attempting ImgFlip Meme Generator fallback...");
-        const seed = Math.floor(Math.random() * 1000000);
-        const imgflipUrl = `https://api.imgflip.com/ai_meme?text=${encodeURIComponent(enhancedPrompt)}&seed=${seed}`;
+        console.log("Attempting Placeholder.com...");
+        const colors = ["FF6B6B", "4ECDC4", "45B7D1", "FFA07A", "98D8C8", "F7DC6F"];
+        const bgColor = colors[Math.floor(Math.random() * colors.length)];
+        const textColor = "FFFFFF";
+        const encodedText = encodeURIComponent(prompt.substring(0, 50));
 
-        const imgflipResponse = await fetch(imgflipUrl, {
-          method: "GET",
-          headers: { "Accept": "application/json" }
+        const placeholderUrl = `https://via.placeholder.com/1024x1024/${bgColor}/${textColor}?text=${encodedText}`;
+
+        const placeholderResponse = await fetch(placeholderUrl, {
+          method: "GET"
         });
 
-        if (imgflipResponse.ok) {
-          const data = await imgflipResponse.json();
-          if (data.success && data.data?.url) {
-            const imageResponse = await fetch(data.data.url);
-            const imageBlob = await imageResponse.blob();
-            const arrayBuffer = await imageBlob.arrayBuffer();
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-            imageUrl = `data:image/jpeg;base64,${base64}`;
-            console.log("Successfully generated with ImgFlip");
-          }
+        if (placeholderResponse.ok) {
+          const imageBlob = await placeholderResponse.blob();
+          const arrayBuffer = await imageBlob.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          imageUrl = `data:image/png;base64,${base64}`;
+          console.log("Successfully generated with Placeholder.com");
         } else {
-          lastError = `ImgFlip: ${imgflipResponse.status}`;
+          lastError = `Placeholder: ${placeholderResponse.status}`;
         }
       } catch (error) {
-        lastError = `ImgFlip: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("ImgFlip error:", error);
+        lastError = `Placeholder: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Placeholder error:", error);
+      }
+    }
+
+    // Try DummyImage.com as final fallback
+    if (!imageUrl) {
+      try {
+        console.log("Attempting DummyImage...");
+        const colors = ["ff6b6b", "4ecdc4", "45b7d1", "ffa07a", "98d8c8", "f7dc6f"];
+        const bgColor = colors[Math.floor(Math.random() * colors.length)];
+        const shortText = prompt.substring(0, 30).replace(/[^a-zA-Z0-9 ]/g, '');
+
+        const dummyUrl = `https://dummyimage.com/1024x1024/${bgColor}/ffffff&text=${encodeURIComponent(shortText)}`;
+
+        const dummyResponse = await fetch(dummyUrl, {
+          method: "GET"
+        });
+
+        if (dummyResponse.ok) {
+          const imageBlob = await dummyResponse.blob();
+          const arrayBuffer = await imageBlob.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          imageUrl = `data:image/png;base64,${base64}`;
+          console.log("Successfully generated with DummyImage");
+        } else {
+          lastError = `DummyImage: ${dummyResponse.status}`;
+        }
+      } catch (error) {
+        lastError = `DummyImage: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("DummyImage error:", error);
       }
     }
 
     if (!imageUrl) {
       return new Response(
         JSON.stringify({
-          error: "All AI services failed",
+          error: "All image services failed",
           details: lastError,
           message: "Unable to generate image at this time. Please try again later."
         }),
