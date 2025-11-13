@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Play, RotateCcw } from 'lucide-react';
+import { X, Play, RotateCcw, Upload } from 'lucide-react';
 
 interface VideoTutorialModalProps {
   isOpen: boolean;
@@ -10,6 +10,8 @@ interface VideoTutorialModalProps {
 export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutorialModalProps) {
   const [hasEnded, setHasEnded] = useState(false);
   const [videoKey, setVideoKey] = useState(0);
+  const [videoUrl, setVideoUrl] = useState<string>('https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4');
+  const [videoError, setVideoError] = useState(false);
 
   if (!isOpen) return null;
 
@@ -21,6 +23,16 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
   const handleComplete = () => {
     onComplete();
     onClose();
+  };
+
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('video/')) {
+      const url = URL.createObjectURL(file);
+      setVideoUrl(url);
+      setVideoError(false);
+      setVideoKey(prev => prev + 1);
+    }
   };
 
   return (
@@ -51,19 +63,37 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
           </div>
 
           <div className="relative bg-gray-900 rounded-xl overflow-hidden shadow-2xl aspect-video">
-            <video
-              key={videoKey}
-              className="w-full h-full"
-              controls
-              autoPlay
-              onEnded={() => setHasEnded(true)}
-              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'%3E%3Crect fill='%231f2937' width='1280' height='720'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='48' fill='%239ca3af'%3EFlowPost Tutorial%3C/text%3E%3C/svg%3E"
-            >
-              <source src="/FlowPost-Video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {videoError ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+                <Upload className="w-16 h-16 text-gray-400 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">Upload Your Tutorial Video</h3>
+                <p className="text-gray-400 mb-6">Click below to select your FlowPost Video.mp4 file</p>
+                <label className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] cursor-pointer">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    className="hidden"
+                  />
+                  Select Video File
+                </label>
+              </div>
+            ) : (
+              <video
+                key={videoKey}
+                className="w-full h-full"
+                controls
+                autoPlay
+                onEnded={() => setHasEnded(true)}
+                onError={() => setVideoError(true)}
+                poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'%3E%3Crect fill='%231f2937' width='1280' height='720'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='48' fill='%239ca3af'%3EFlowPost Tutorial%3C/text%3E%3C/svg%3E"
+              >
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
 
-            {hasEnded && (
+            {hasEnded && !videoError && (
               <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
@@ -96,9 +126,25 @@ export function VideoTutorialModal({ isOpen, onClose, onComplete }: VideoTutoria
           </div>
 
           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>Tip:</strong> You can access this tutorial anytime from the Help menu in the navigation bar.
-            </p>
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <strong>Tip:</strong> You can access this tutorial anytime from the Help menu in the navigation bar.
+                </p>
+              </div>
+              {!videoError && (
+                <label className="flex items-center gap-2 px-3 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg font-medium transition-colors cursor-pointer border border-gray-200 dark:border-gray-600">
+                  <Upload className="w-3.5 h-3.5" />
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    className="hidden"
+                  />
+                  Upload Custom Video
+                </label>
+              )}
+            </div>
           </div>
         </div>
       </div>
