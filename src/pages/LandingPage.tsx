@@ -320,7 +320,7 @@ export function LandingPage() {
                     {[
                       { icon: Instagram, name: 'Instagram', color: '#E4405F' },
                       { icon: Facebook, name: 'Facebook', color: '#1877F2' },
-                      { icon: XIcon, name: 'X', color: '#000000' },
+                      { icon: XIcon, name: 'X', color: '#FFFFFF' },
                       { icon: Linkedin, name: 'LinkedIn', color: '#0A66C2' },
                     ].map((platform, i) => (
                       <div
