@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { imageData } = await req.json();
+    const { imageData, variationSeed } = await req.json();
 
     if (!imageData) {
       return new Response(
@@ -108,6 +108,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const tones = ["Inspirational", "Casual & Engaging", "Professional", "Enthusiastic", "Playful", "Informative", "Storytelling"];
+    const randomTone = tones[Math.floor(Math.random() * tones.length)];
+    const timestamp = Date.now();
+    const seed = variationSeed || timestamp;
+
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
@@ -116,6 +121,8 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         model: "llama-3.1-sonar-large-128k-online",
+        temperature: 0.9,
+        top_p: 0.95,
         messages: [
           {
             role: "user",
@@ -128,13 +135,15 @@ Deno.serve(async (req: Request) => {
               },
               {
                 type: "text",
-                text: `Analyze this image and create an engaging social media caption.
+                text: `Analyze this image and create a UNIQUE and engaging social media caption with a ${randomTone} tone.
+
+                IMPORTANT: Create a completely fresh and original caption. Variation seed: ${seed}
 
                 Return your response in this exact JSON format:
                 {
                   "text": "The main caption text with emojis",
                   "hashtags": ["#Hashtag1", "#Hashtag2", "#Hashtag3"],
-                  "tone": "The tone of the caption (e.g., Inspirational, Casual, Professional, Enthusiastic)"
+                  "tone": "${randomTone}"
                 }
 
                 Make the caption engaging, relevant to the image, and optimized for social media. Include 2-3 relevant hashtags. Only return the JSON, no additional text.`

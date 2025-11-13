@@ -31,7 +31,11 @@ export function AICaptionGenerator() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const promises = Array(3).fill(null).map(async () => {
+      const baseTimestamp = Date.now();
+
+      const promises = Array(3).fill(null).map(async (_, index) => {
+        const variationSeed = baseTimestamp + index * 1000 + Math.random() * 1000;
+
         const response = await fetch(
           `${supabaseUrl}/functions/v1/generate-caption`,
           {
@@ -40,7 +44,10 @@ export function AICaptionGenerator() {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${supabaseAnonKey}`,
             },
-            body: JSON.stringify({ imageData: uploadedImage }),
+            body: JSON.stringify({
+              imageData: uploadedImage,
+              variationSeed: variationSeed
+            }),
           }
         );
 
