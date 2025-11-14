@@ -32,6 +32,8 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showTips, setShowTips] = useState(true);
   const [showPixlrInfo, setShowPixlrInfo] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleGenerate = async () => {
     if (prompt.trim().length < 10) {
@@ -77,6 +79,8 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
 
       if (data.image_url || data.url || data.output_url || data.result) {
         const imageUrl = data.image_url || data.url || data.output_url || data.result;
+        setImageLoading(true);
+        setImageError(false);
         setGeneratedImage(imageUrl);
       } else {
         console.error('Unexpected API response structure:', data);
@@ -92,10 +96,21 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
   };
 
   const handleRegenerate = async () => {
-    // Clear the current image to show loading state
     setGeneratedImage(null);
-    // Regenerate with the same prompt and style - will get a new image due to random seed
+    setImageLoading(false);
+    setImageError(false);
     await handleGenerate();
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+    console.error('Failed to load image from URL:', generatedImage);
   };
 
   const handleUseImage = () => {
@@ -239,16 +254,47 @@ export function AIGenerationModal({ onClose, onGenerate }: AIGenerationModalProp
             </>
           ) : (
             <div className="space-y-4">
-              <div className="relative rounded-xl overflow-hidden border-2 border-purple-200 dark:border-purple-800">
+              <div className="relative rounded-xl overflow-hidden border-2 border-purple-200 dark:border-purple-800 min-h-96 bg-gray-100 dark:bg-gray-800">
+                {imageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <div className="text-center">
+                      <Loader2 className="w-8 h-8 text-purple-500 animate-spin mx-auto mb-2" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Loading image...</p>
+                    </div>
+                  </div>
+                )}
+                {imageError && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <div className="text-center p-6">
+                      <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <X className="w-6 h-6 text-red-600 dark:text-red-400" />
+                      </div>
+                      <p className="text-sm text-gray-900 dark:text-white font-medium mb-1">Failed to load image</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">The image service may be temporarily unavailable</p>
+                      <button
+                        onClick={handleRegenerate}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <img
                   src={generatedImage}
                   alt="AI Generated"
                   className="w-full h-96 object-cover"
+                  crossOrigin="anonymous"
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  style={{ display: imageLoading || imageError ? 'none' : 'block' }}
                 />
-                <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-lg flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" />
-                  AI Generated
-                </div>
+                {!imageLoading && !imageError && (
+                  <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-lg flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    AI Generated
+                  </div>
+                )}
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
