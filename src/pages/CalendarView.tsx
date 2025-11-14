@@ -44,12 +44,15 @@ export function CalendarView() {
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
       const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
+      startOfMonth.setHours(0, 0, 0, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
       const { data, error } = await supabase
         .from('posts')
         .select('*')
         .in('status', ['scheduled', 'published'])
-        .gte('scheduled_date', startOfMonth.toISOString().split('T')[0])
-        .lte('scheduled_date', endOfMonth.toISOString().split('T')[0])
+        .gte('scheduled_date', startOfMonth.toISOString())
+        .lte('scheduled_date', endOfMonth.toISOString())
         .order('scheduled_date', { ascending: true })
         .order('scheduled_time', { ascending: true });
 
@@ -87,7 +90,10 @@ export function CalendarView() {
     if (!date) return [];
 
     const dateStr = date.toISOString().split('T')[0];
-    let filteredPosts = posts.filter(post => post.scheduled_date === dateStr);
+    let filteredPosts = posts.filter(post => {
+      const postDate = new Date(post.scheduled_date).toISOString().split('T')[0];
+      return postDate === dateStr;
+    });
 
     if (selectedPlatforms.length > 0) {
       filteredPosts = filteredPosts.filter(post =>
