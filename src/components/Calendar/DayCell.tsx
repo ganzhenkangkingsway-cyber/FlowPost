@@ -2,6 +2,54 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { PlatformIcon } from './PlatformIcon';
 
+const getPlatformColor = (platform: string) => {
+  const colors: { [key: string]: { bg: string; text: string; bgDark: string; textDark: string } } = {
+    Instagram: {
+      bg: 'bg-pink-100',
+      text: 'text-pink-700',
+      bgDark: 'dark:bg-pink-900/30',
+      textDark: 'dark:text-pink-400'
+    },
+    Facebook: {
+      bg: 'bg-blue-100',
+      text: 'text-blue-700',
+      bgDark: 'dark:bg-blue-900/30',
+      textDark: 'dark:text-blue-400'
+    },
+    X: {
+      bg: 'bg-gray-100',
+      text: 'text-gray-700',
+      bgDark: 'dark:bg-gray-700/50',
+      textDark: 'dark:text-gray-300'
+    },
+    LinkedIn: {
+      bg: 'bg-sky-100',
+      text: 'text-sky-700',
+      bgDark: 'dark:bg-sky-900/30',
+      textDark: 'dark:text-sky-400'
+    },
+    TikTok: {
+      bg: 'bg-cyan-100',
+      text: 'text-cyan-700',
+      bgDark: 'dark:bg-cyan-900/30',
+      textDark: 'dark:text-cyan-400'
+    },
+    YouTube: {
+      bg: 'bg-red-100',
+      text: 'text-red-700',
+      bgDark: 'dark:bg-red-900/30',
+      textDark: 'dark:text-red-400'
+    }
+  };
+
+  return colors[platform] || {
+    bg: 'bg-purple-100',
+    text: 'text-purple-700',
+    bgDark: 'dark:bg-purple-900/30',
+    textDark: 'dark:text-purple-400'
+  };
+};
+
 interface Post {
   id: string;
   scheduled_date: string;
@@ -74,29 +122,31 @@ export function DayCell({
 
         {posts.length > 0 && (
           <div className="flex-1 flex flex-col gap-2 overflow-hidden">
-            {posts.slice(0, 3).map((post) => (
-              <button
-                key={post.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPostClick(post);
-                }}
-                className={`text-left px-2 py-1.5 rounded text-xs transition-all hover:shadow-sm font-medium flex items-center justify-between gap-2 ${
-                  post.status === 'published'
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                    : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
-                }`}
-              >
-                <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                  <span className="font-semibold whitespace-nowrap">{post.scheduled_time}</span>
-                  <span className="text-xs opacity-70">-</span>
-                  <span className="truncate">{post.platforms[0]}</span>
-                </div>
-                {post.platforms.length > 1 && (
-                  <span className="text-xs opacity-70 whitespace-nowrap">+{post.platforms.length - 1}</span>
-                )}
-              </button>
-            ))}
+            {posts.slice(0, 3).map((post) => {
+              const platformColor = post.status === 'published'
+                ? { bg: 'bg-green-100', text: 'text-green-700', bgDark: 'dark:bg-green-900/30', textDark: 'dark:text-green-400' }
+                : getPlatformColor(post.platforms[0]);
+
+              return (
+                <button
+                  key={post.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPostClick(post);
+                  }}
+                  className={`text-left px-2 py-1.5 rounded text-xs transition-all hover:shadow-sm font-medium flex items-center justify-between gap-2 ${platformColor.bg} ${platformColor.bgDark} ${platformColor.text} ${platformColor.textDark}`}
+                >
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="font-semibold whitespace-nowrap">{post.scheduled_time}</span>
+                    <span className="text-xs opacity-70">-</span>
+                    <span className="truncate">{post.platforms[0]}</span>
+                  </div>
+                  {post.platforms.length > 1 && (
+                    <span className="text-xs opacity-70 whitespace-nowrap">+{post.platforms.length - 1}</span>
+                  )}
+                </button>
+              );
+            })}
             {posts.length > 3 && (
               <span className="text-xs text-gray-500 dark:text-gray-400 px-2">
                 +{posts.length - 3} more
