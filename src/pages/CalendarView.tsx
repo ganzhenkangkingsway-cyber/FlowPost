@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Filter } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Filter, Clock, Trash2, Edit, Eye, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { PostPreviewModal } from '../components/Calendar/PostPreviewModal';
 import { DayCell } from '../components/Calendar/DayCell';
 import { PlatformFilter } from '../components/Calendar/PlatformFilter';
+import { getPlatformIcon } from '../config/platformIcons';
 
 interface ScheduledPost {
   id: string;
@@ -14,8 +15,10 @@ interface ScheduledPost {
   caption: string;
   platforms: string[];
   image_url: string | null;
+  video_url: string | null;
   status: 'scheduled' | 'published' | 'draft';
   platform_accounts: { [key: string]: string };
+  created_at?: string;
 }
 
 export function CalendarView() {
@@ -120,6 +123,68 @@ export function CalendarView() {
       navigate('/dashboard/create');
     }
   };
+
+  const handleDelete = async (postId: string) => {
+    if (!confirm('Are you sure you want to delete this scheduled post?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId);
+
+      if (error) throw error;
+
+      setPosts(posts.filter(p => p.id !== postId));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('Failed to delete post');
+    }
+  };
+
+  const handleEdit = (postId: string) => {
+    navigate(`/dashboard/create?edit=${postId}`);
+  };
+
+  const formatDateTime = (date: string, time: string) => {
+    const dateTime = new Date(`${date}T${time || '00:00'}:00`);
+    return dateTime.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  };
+
+  const getTimeUntil = (date: string, time: string) => {
+    const postDateTime = new Date(`${date}T${time || '00:00'}:00`);
+    const now = new Date();
+    const diffMs = postDateTime.getTime() - now.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+
+    if (diffDays > 0) {
+      return `In ${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+    } else if (diffHours > 0) {
+      return `In ${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    } else if (diffMins > 0) {
+      return `In ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
+    } else {
+      return 'Very soon';
+    }
+  };
+
+  const scheduledPosts = posts.filter(p => {
+    const postDateTime = new Date(`${p.scheduled_date}T${p.scheduled_time || '00:00'}:00`);
+    return postDateTime >= new Date() && p.status === 'scheduled';
+  }).sort((a, b) => {
+    const dateA = new Date(`${a.scheduled_date}T${a.scheduled_time || '00:00'}:00`);
+    const dateB = new Date(`${b.scheduled_date}T${b.scheduled_time || '00:00'}:00`);
+    return dateA.getTime() - dateB.getTime();
+  });
 
   const monthName = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   const days = getDaysInMonth();
@@ -235,6 +300,132 @@ export function CalendarView() {
             );
           })}
         </div>
+      </div>
+
+      <div className="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Scheduled Posts</h2>
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            {scheduledPosts.length} {scheduledPosts.length === 1 ? 'post' : 'posts'}
+          </span>
+        </div>
+
+        {scheduledPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <Clock className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No scheduled posts</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Create and schedule your first post to see it here
+            </p>
+            <button
+              onClick={() => navigate('/dashboard/create')}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-medium hover:scale-105 transition-transform shadow-lg"
+            >
+              Create Your First Post
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {scheduledPosts.map((post) => (
+              <div
+                key={post.id}
+                className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:shadow-md transition-all duration-300 border border-transparent hover:border-blue-200 dark:hover:border-blue-800"
+              >
+                <div className="w-24 h-24 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden flex-shrink-0">
+                  {post.image_url ? (
+                    <img
+                      src={post.image_url}
+                      alt="Post preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : post.video_url ? (
+                    <video
+                      src={post.video_url}
+                      className="w-full h-full object-cover"
+                      muted
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs font-semibold">
+                          Scheduled
+                        </span>
+                        <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                          <Clock className="w-4 h-4" />
+                          <span className="font-medium">{getTimeUntil(post.scheduled_date, post.scheduled_time)}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {formatDateTime(post.scheduled_date, post.scheduled_time)}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => setSelectedPost(post)}
+                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                        title="View details"
+                      >
+                        <Eye className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(post.id)}
+                        className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                        title="Edit post"
+                      >
+                        <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                        title="Delete post"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 line-clamp-2">
+                    {post.caption || 'No caption'}
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Posting to:</span>
+                    <div className="flex gap-2 flex-wrap">
+                      {post.platforms.map((platform) => {
+                        const platformInfo = getPlatformIcon(platform);
+                        return (
+                          <div
+                            key={platform}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${platformInfo.bgColor}`}
+                            title={platformInfo.name}
+                          >
+                            <img
+                              src={platformInfo.icon}
+                              alt={platformInfo.name}
+                              className={`w-3.5 h-3.5 ${platformInfo.iconClass}`}
+                            />
+                            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                              {post.platform_accounts?.[platform] || platformInfo.name}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {selectedPost && (
