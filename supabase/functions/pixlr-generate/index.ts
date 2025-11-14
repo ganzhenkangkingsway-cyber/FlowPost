@@ -52,7 +52,7 @@ Deno.serve(async (req: Request) => {
     let imageUrl: string | null = null;
     let lastError: string | null = null;
 
-    // Try Pollinations AI with simpler approach
+    // Try Pollinations AI first
     try {
       console.log("Attempting Pollinations AI...");
       const seed = Math.floor(Math.random() * 1000000);
@@ -70,7 +70,6 @@ Deno.serve(async (req: Request) => {
           const arrayBuffer = await imageBlob.arrayBuffer();
           const uint8Array = new Uint8Array(arrayBuffer);
 
-          // Convert to base64 in chunks to avoid stack overflow
           let base64 = '';
           const chunkSize = 8192;
           for (let i = 0; i < uint8Array.length; i += chunkSize) {
@@ -91,7 +90,7 @@ Deno.serve(async (req: Request) => {
       console.error("Pollinations error:", error);
     }
 
-    // Try Replicate with Stable Diffusion
+    // Try AI Horde
     if (!imageUrl) {
       try {
         console.log("Attempting AI Horde...");
@@ -122,7 +121,6 @@ Deno.serve(async (req: Request) => {
           const hordeData = await hordeResponse.json();
           const jobId = hordeData.id;
 
-          // Poll for result (max 60 seconds)
           let attempts = 0;
           const maxAttempts = 30;
 
@@ -140,7 +138,6 @@ Deno.serve(async (req: Request) => {
               const arrayBuffer = await imageBlob.arrayBuffer();
               const uint8Array = new Uint8Array(arrayBuffer);
 
-              // Convert to base64 in chunks to avoid stack overflow
               let base64 = '';
               const chunkSize = 8192;
               for (let i = 0; i < uint8Array.length; i += chunkSize) {
@@ -196,7 +193,6 @@ Deno.serve(async (req: Request) => {
             const arrayBuffer = await imageBlob.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
 
-            // Convert to base64 in chunks to avoid stack overflow
             let base64 = '';
             const chunkSize = 8192;
             for (let i = 0; i < uint8Array.length; i += chunkSize) {
@@ -216,40 +212,49 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Fallback to high-quality stock photo
+    // Try Hugging Face Inference API
     if (!imageUrl) {
       try {
-        console.log("Falling back to Picsum Photos...");
-        const seed = Math.floor(Math.random() * 1000);
-        const picsumUrl = `https://picsum.photos/seed/${seed}/1024/1024`;
+        console.log("Attempting Hugging Face Inference API...");
+        const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
 
-        const picsumResponse = await fetch(picsumUrl, {
-          method: "GET",
-          redirect: "follow",
-          signal: AbortSignal.timeout(15000)
+        const hfResponse = await fetch(hfUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            inputs: enhancedPrompt,
+            parameters: {
+              num_inference_steps: 30,
+              guidance_scale: 7.5
+            }
+          }),
+          signal: AbortSignal.timeout(60000)
         });
 
-        if (picsumResponse.ok) {
-          const imageBlob = await picsumResponse.blob();
-          const arrayBuffer = await imageBlob.arrayBuffer();
-          const uint8Array = new Uint8Array(arrayBuffer);
+        if (hfResponse.ok) {
+          const imageBlob = await hfResponse.blob();
+          if (imageBlob.size > 1000) {
+            const arrayBuffer = await imageBlob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
 
-          // Convert to base64 in chunks to avoid stack overflow
-          let base64 = '';
-          const chunkSize = 8192;
-          for (let i = 0; i < uint8Array.length; i += chunkSize) {
-            const chunk = uint8Array.slice(i, i + chunkSize);
-            base64 += String.fromCharCode.apply(null, Array.from(chunk));
+            let base64 = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+              const chunk = uint8Array.slice(i, i + chunkSize);
+              base64 += String.fromCharCode.apply(null, Array.from(chunk));
+            }
+
+            imageUrl = `data:image/png;base64,${btoa(base64)}`;
+            console.log("Successfully generated with Hugging Face");
           }
-
-          imageUrl = `data:image/jpeg;base64,${btoa(base64)}`;
-          console.log("Successfully generated with Picsum Photos (fallback)");
         } else {
-          lastError = `Picsum: ${picsumResponse.status}`;
+          lastError = `Hugging Face: ${hfResponse.status}`;
         }
       } catch (error) {
-        lastError = `Picsum: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Picsum error:", error);
+        lastError = `Hugging Face: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Hugging Face error:", error);
       }
     }
 
