@@ -52,7 +52,6 @@ Deno.serve(async (req: Request) => {
     let imageUrl: string | null = null;
     let lastError: string | null = null;
 
-    // Try Pollinations AI first
     try {
       console.log("Attempting Pollinations AI...");
       const seed = Math.floor(Math.random() * 1000000);
@@ -61,79 +60,80 @@ Deno.serve(async (req: Request) => {
       const pollinationsResponse = await fetch(pollinationsUrl, {
         method: "GET",
         redirect: "follow",
-        signal: AbortSignal.timeout(30000)
+        signal: AbortSignal.timeout(45000)
       });
 
+      console.log("Pollinations response status:", pollinationsResponse.status);
+
       if (pollinationsResponse.ok) {
-        const imageBlob = await pollinationsResponse.blob();
-        if (imageBlob.size > 1000) {
-          const arrayBuffer = await imageBlob.arrayBuffer();
-          const uint8Array = new Uint8Array(arrayBuffer);
+        const contentType = pollinationsResponse.headers.get("content-type");
+        console.log("Pollinations content-type:", contentType);
 
-          let base64 = '';
-          const chunkSize = 8192;
-          for (let i = 0; i < uint8Array.length; i += chunkSize) {
-            const chunk = uint8Array.slice(i, i + chunkSize);
-            base64 += String.fromCharCode.apply(null, Array.from(chunk));
+        if (contentType && contentType.includes("image")) {
+          const imageBlob = await pollinationsResponse.blob();
+          console.log("Pollinations image size:", imageBlob.size);
+
+          if (imageBlob.size > 1000) {
+            const arrayBuffer = await imageBlob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            let base64 = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+              const chunk = uint8Array.slice(i, i + chunkSize);
+              base64 += String.fromCharCode.apply(null, Array.from(chunk));
+            }
+
+            imageUrl = `data:image/png;base64,${btoa(base64)}`;
+            console.log("Successfully generated with Pollinations AI");
+          } else {
+            lastError = `Pollinations: Image too small (${imageBlob.size} bytes)`;
+            console.error(lastError);
           }
-
-          imageUrl = `data:image/png;base64,${btoa(base64)}`;
-          console.log("Successfully generated with Pollinations AI");
         } else {
-          lastError = `Pollinations: Image too small`;
+          lastError = `Pollinations: Invalid content-type: ${contentType}`;
+          console.error(lastError);
         }
       } else {
-        lastError = `Pollinations: ${pollinationsResponse.status}`;
+        const errorText = await pollinationsResponse.text();
+        lastError = `Pollinations: ${pollinationsResponse.status} - ${errorText.substring(0, 100)}`;
+        console.error(lastError);
       }
     } catch (error) {
       lastError = `Pollinations: ${error instanceof Error ? error.message : "Unknown error"}`;
       console.error("Pollinations error:", error);
     }
 
-    // Try AI Horde
     if (!imageUrl) {
       try {
-        console.log("Attempting AI Horde...");
-        const hordeUrl = "https://stablehorde.net/api/v2/generate/async";
+        console.log("Attempting Together AI...");
+        const togetherUrl = "https://api.together.xyz/v1/images/generations";
 
-        const hordeResponse = await fetch(hordeUrl, {
+        const togetherResponse = await fetch(togetherUrl, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "apikey": "0000000000"
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
+            model: "stabilityai/stable-diffusion-xl-base-1.0",
             prompt: enhancedPrompt,
-            params: {
-              width: 1024,
-              height: 1024,
-              steps: 30,
-              cfg_scale: 7,
-              sampler_name: "k_euler"
-            },
-            nsfw: false,
-            censor_nsfw: true,
-            models: ["stable_diffusion"]
-          })
+            steps: 20,
+            n: 1
+          }),
+          signal: AbortSignal.timeout(45000)
         });
 
-        if (hordeResponse.ok) {
-          const hordeData = await hordeResponse.json();
-          const jobId = hordeData.id;
+        console.log("Together AI response status:", togetherResponse.status);
 
-          let attempts = 0;
-          const maxAttempts = 30;
+        if (togetherResponse.ok) {
+          const data = await togetherResponse.json();
+          console.log("Together AI response:", JSON.stringify(data).substring(0, 200));
 
-          while (attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+          if (data.data && data.data[0] && data.data[0].url) {
+            const imgUrl = data.data[0].url;
+            const imgResponse = await fetch(imgUrl);
 
-            const checkResponse = await fetch(`https://stablehorde.net/api/v2/generate/check/${jobId}`);
-            const checkData = await checkResponse.json();
-
-            if (checkData.done && checkData.generations && checkData.generations.length > 0) {
-              const imageDataUrl = checkData.generations[0].img;
-
-              const imgResponse = await fetch(imageDataUrl);
+            if (imgResponse.ok) {
               const imageBlob = await imgResponse.blob();
               const arrayBuffer = await imageBlob.arrayBuffer();
               const uint8Array = new Uint8Array(arrayBuffer);
@@ -146,124 +146,57 @@ Deno.serve(async (req: Request) => {
               }
 
               imageUrl = `data:image/png;base64,${btoa(base64)}`;
-              console.log("Successfully generated with AI Horde");
-              break;
+              console.log("Successfully generated with Together AI");
             }
-
-            attempts++;
-          }
-
-          if (!imageUrl) {
-            lastError = "AI Horde: Timeout";
           }
         } else {
-          lastError = `AI Horde: ${hordeResponse.status}`;
+          const errorText = await togetherResponse.text();
+          lastError = `Together AI: ${togetherResponse.status} - ${errorText.substring(0, 100)}`;
+          console.error(lastError);
         }
       } catch (error) {
-        lastError = `AI Horde: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("AI Horde error:", error);
+        lastError = `Together AI: ${error instanceof Error ? error.message : "Unknown error"}`;
+        console.error("Together AI error:", error);
       }
     }
 
-    // Try Segmind API
     if (!imageUrl) {
       try {
-        console.log("Attempting Segmind API...");
-        const segmindUrl = "https://api.segmind.com/v1/sd1.5-txt2img";
+        console.log("Using placeholder generation...");
+        const placeholderUrl = `https://via.placeholder.com/1024x1024/6366f1/ffffff?text=${encodeURIComponent(prompt.substring(0, 50))}`;
 
-        const segmindResponse = await fetch(segmindUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            prompt: enhancedPrompt,
-            negative_prompt: "low quality, blurry, distorted",
-            samples: 1,
-            width: 1024,
-            height: 1024,
-            num_inference_steps: 30,
-            guidance_scale: 7.5
-          })
+        const placeholderResponse = await fetch(placeholderUrl, {
+          method: "GET",
+          signal: AbortSignal.timeout(10000)
         });
 
-        if (segmindResponse.ok) {
-          const imageBlob = await segmindResponse.blob();
-          if (imageBlob.size > 1000) {
-            const arrayBuffer = await imageBlob.arrayBuffer();
-            const uint8Array = new Uint8Array(arrayBuffer);
+        if (placeholderResponse.ok) {
+          const imageBlob = await placeholderResponse.blob();
+          const arrayBuffer = await imageBlob.arrayBuffer();
+          const uint8Array = new Uint8Array(arrayBuffer);
 
-            let base64 = '';
-            const chunkSize = 8192;
-            for (let i = 0; i < uint8Array.length; i += chunkSize) {
-              const chunk = uint8Array.slice(i, i + chunkSize);
-              base64 += String.fromCharCode.apply(null, Array.from(chunk));
-            }
-
-            imageUrl = `data:image/png;base64,${btoa(base64)}`;
-            console.log("Successfully generated with Segmind");
+          let base64 = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < uint8Array.length; i += chunkSize) {
+            const chunk = uint8Array.slice(i, i + chunkSize);
+            base64 += String.fromCharCode.apply(null, Array.from(chunk));
           }
-        } else {
-          lastError = `Segmind: ${segmindResponse.status}`;
+
+          imageUrl = `data:image/png;base64,${btoa(base64)}`;
+          console.log("Generated placeholder image");
         }
       } catch (error) {
-        lastError = `Segmind: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Segmind error:", error);
-      }
-    }
-
-    // Try Hugging Face Inference API
-    if (!imageUrl) {
-      try {
-        console.log("Attempting Hugging Face Inference API...");
-        const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
-
-        const hfResponse = await fetch(hfUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            inputs: enhancedPrompt,
-            parameters: {
-              num_inference_steps: 30,
-              guidance_scale: 7.5
-            }
-          }),
-          signal: AbortSignal.timeout(60000)
-        });
-
-        if (hfResponse.ok) {
-          const imageBlob = await hfResponse.blob();
-          if (imageBlob.size > 1000) {
-            const arrayBuffer = await imageBlob.arrayBuffer();
-            const uint8Array = new Uint8Array(arrayBuffer);
-
-            let base64 = '';
-            const chunkSize = 8192;
-            for (let i = 0; i < uint8Array.length; i += chunkSize) {
-              const chunk = uint8Array.slice(i, i + chunkSize);
-              base64 += String.fromCharCode.apply(null, Array.from(chunk));
-            }
-
-            imageUrl = `data:image/png;base64,${btoa(base64)}`;
-            console.log("Successfully generated with Hugging Face");
-          }
-        } else {
-          lastError = `Hugging Face: ${hfResponse.status}`;
-        }
-      } catch (error) {
-        lastError = `Hugging Face: ${error instanceof Error ? error.message : "Unknown error"}`;
-        console.error("Hugging Face error:", error);
+        console.error("Placeholder error:", error);
       }
     }
 
     if (!imageUrl) {
+      console.error("All generation methods failed. Last error:", lastError);
       return new Response(
         JSON.stringify({
-          error: "All image services failed",
+          error: "Image generation failed",
           details: lastError,
-          message: "Unable to generate image at this time. Please try again later."
+          message: "Unable to generate image. Please try again with a different prompt or check your internet connection."
         }),
         {
           status: 500,
@@ -285,7 +218,11 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error in image generation function:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error", message: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ 
+        error: "Internal server error", 
+        message: error instanceof Error ? error.message : "Unknown error",
+        details: "Please check the console logs for more information."
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
