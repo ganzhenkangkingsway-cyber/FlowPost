@@ -35,7 +35,7 @@ export function DayCell({
   const [showTooltip, setShowTooltip] = useState(false);
 
   if (!date) {
-    return <div className="aspect-square p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></div>;
+    return <div className="min-h-[120px] p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></div>;
   }
 
   const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
@@ -46,7 +46,7 @@ export function DayCell({
 
   return (
     <div
-      className={`aspect-square p-2 rounded-lg border-2 transition-all cursor-pointer group relative ${
+      className={`min-h-[120px] p-3 rounded-lg border transition-all cursor-pointer group relative ${
         isToday
           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
           : isSelected
@@ -58,68 +58,57 @@ export function DayCell({
       onMouseLeave={() => setShowTooltip(false)}
     >
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between mb-1">
+        <div className="mb-2">
           <span
-            className={`text-sm font-medium ${
+            className={`text-sm ${
               isToday
-                ? 'text-blue-600 dark:text-blue-400 font-bold'
+                ? 'text-blue-600 dark:text-blue-400 font-semibold'
                 : isPast
                 ? 'text-gray-400 dark:text-gray-600'
-                : 'text-gray-700 dark:text-gray-300'
+                : 'text-gray-600 dark:text-gray-400'
             }`}
           >
             {date.getDate()}
           </span>
-          {posts.length === 0 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onCreatePost();
-              }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-            >
-              <Plus className="w-3 h-3 text-gray-500" />
-            </button>
-          )}
         </div>
 
         {posts.length > 0 && (
-          <div className="flex-1 flex flex-col gap-1 overflow-hidden">
-            {posts.slice(0, 2).map((post) => (
+          <div className="flex-1 flex flex-col gap-2 overflow-hidden">
+            {posts.slice(0, 3).map((post) => (
               <button
                 key={post.id}
                 onClick={(e) => {
                   e.stopPropagation();
                   onPostClick(post);
                 }}
-                className={`text-left px-2 py-1 rounded text-xs truncate transition-all hover:scale-105 font-medium ${
+                className={`text-left px-2 py-1.5 rounded text-xs transition-all hover:shadow-sm font-medium flex items-center justify-between gap-2 ${
                   post.status === 'published'
                     ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                     : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
                 }`}
               >
-                <span className="font-bold">{post.scheduled_time}</span> • {post.platforms.join(', ')}
+                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                  <span className="font-semibold whitespace-nowrap">{post.scheduled_time}</span>
+                  <span className="text-xs opacity-70">-</span>
+                  <span className="truncate">{post.platforms[0]}</span>
+                </div>
+                {post.platforms.length > 1 && (
+                  <span className="text-xs opacity-70 whitespace-nowrap">+{post.platforms.length - 1}</span>
+                )}
               </button>
             ))}
-            {posts.length > 2 && (
+            {posts.length > 3 && (
               <span className="text-xs text-gray-500 dark:text-gray-400 px-2">
-                +{posts.length - 2} more
+                +{posts.length - 3} more
               </span>
             )}
           </div>
         )}
 
-        {allPlatforms.length > 0 && (
-          <div className="flex gap-1 mt-1 flex-wrap">
-            {allPlatforms.slice(0, 4).map((platform) => (
-              <PlatformIcon key={platform} platform={platform} size="xs" />
-            ))}
-          </div>
-        )}
       </div>
 
       {showTooltip && posts.length > 0 && (
-        <div className="absolute left-full top-0 ml-2 z-50 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 animate-fade-in">
+        <div className="absolute left-full top-0 ml-3 z-50 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4">
           <div className="space-y-3">
             {posts.slice(0, 3).map((post) => (
               <div
@@ -134,7 +123,7 @@ export function DayCell({
                   <img
                     src={post.image_url}
                     alt="Post thumbnail"
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
                   />
                 )}
                 <div className="flex-1 min-w-0">
@@ -143,7 +132,7 @@ export function DayCell({
                       {post.scheduled_time}
                     </span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
+                      className={`text-xs px-2 py-0.5 rounded ${
                         post.status === 'published'
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                           : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
@@ -152,10 +141,10 @@ export function DayCell({
                       {post.status}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
                     {post.caption}
                   </p>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 flex-wrap">
                     {post.platforms.map((platform) => (
                       <PlatformIcon key={platform} platform={platform} size="xs" />
                     ))}
@@ -164,7 +153,7 @@ export function DayCell({
               </div>
             ))}
             {posts.length > 3 && (
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-center text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
                 +{posts.length - 3} more posts
               </p>
             )}

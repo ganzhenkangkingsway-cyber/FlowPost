@@ -191,26 +191,21 @@ export function CalendarView() {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen gradient-bg-animated">
-      <div className="mb-8">
+    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <div className="mb-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <ChevronLeft className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Calendar</h1>
-              <p className="text-gray-600 dark:text-gray-400">Manage your scheduled posts</p>
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Calendar</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Manage your scheduled posts</p>
           </div>
 
           <div className="flex gap-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-xl font-medium transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 border ${
                 showFilters || selectedPlatforms.length > 0
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -223,7 +218,7 @@ export function CalendarView() {
             </button>
             <button
               onClick={() => handleCreatePost()}
-              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-medium hover:scale-105 transition-transform flex items-center gap-2 shadow-lg"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Create Post
@@ -245,16 +240,16 @@ export function CalendarView() {
         )}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button
               onClick={previousMonth}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </button>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white min-w-[200px] text-center">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white min-w-[180px] text-center">
               {monthName}
             </h2>
             <button
@@ -273,9 +268,9 @@ export function CalendarView() {
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-3">
           {weekDays.map(day => (
-            <div key={day} className="text-center font-semibold text-gray-600 dark:text-gray-400 text-sm py-2">
+            <div key={day} className="text-center font-medium text-gray-500 dark:text-gray-400 text-sm py-2">
               {day}
             </div>
           ))}
@@ -302,9 +297,9 @@ export function CalendarView() {
         </div>
       </div>
 
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Scheduled Posts</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Upcoming Scheduled Posts</h2>
           <span className="text-sm text-gray-600 dark:text-gray-400">
             {scheduledPosts.length} {scheduledPosts.length === 1 ? 'post' : 'posts'}
           </span>
